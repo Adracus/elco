@@ -10,25 +10,7 @@ class Lexer {
 
   def append(consumers: Consumer*) = _consumers.append(consumers:_*)
 
-  protected def on = new LexingBehaviour(this)
-
   def lex(text: String) = new LexingIterator(_consumers.toList, text)
-
-  protected class LexingBehaviour(lexer: Lexer) {
-    protected class RegexLexingBehaviour(val regex: String) {
-      def makeTokenWithIdentifier(identifier: String) = lexer.append(new RegexConsumer(identifier, regex))
-      def ignore() = lexer.append(new Ignorer(regex))
-    }
-
-    protected class SymbolLexingBehaviour(val symbol: String) {
-      def consume() = lexer.append(new SymbolConsumer(symbol))
-    }
-
-    def symbol(symbol: String) = new SymbolLexingBehaviour(symbol)
-    def whitespace(whitespaceConsumer: WhitespaceConsumer) = lexer.append(new WhitespaceConsumer())
-    def regex(regex: String) = new RegexLexingBehaviour(regex)
-    def strings(stringConsumer: StringConsumer) = lexer.append(new StringConsumer())
-  }
 }
 
 class LexingIterator(val consumers: List[Consumer], text: String) extends Iterator[Token] {

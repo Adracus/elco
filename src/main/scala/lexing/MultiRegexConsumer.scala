@@ -18,15 +18,37 @@ class MultiRegexConsumer(val consumers: RegexConsumer*) extends Consumer {
     }
   }
 
-  def or(consumer: RegexConsumer) = {
-    new MultiRegexConsumer(consumers.+:(consumer):_*)
+  def or(consumer: RegexConsumer*) = {
+    new MultiRegexConsumer(consumers ++ (consumer):_*)
+  }
+
+  def orKeyword(keyword: String) = {
+    or(new RegexConsumer(keyword, keyword))
+  }
+
+  def orKeywords(keywords: String*) = {
+    or(keywords.map((keyword: String) => new RegexConsumer(keyword, keyword)):_*)
   }
 }
 
 object MultiRegexConsumer {
   implicit class RichRegexConsumer(val consumer: RegexConsumer) {
-    def or(regexConsumer: RegexConsumer) = {
-      new MultiRegexConsumer(consumer, regexConsumer)
+    def or(consumer: RegexConsumer*) = {
+      new MultiRegexConsumer(consumer ++ (consumer):_*)
     }
+
+    def orKeyword(keyword: String) = {
+      or(new RegexConsumer(keyword, keyword))
+    }
+
+    def orKeywords(keywords: String*) = {
+      or(keywords.map((keyword: String) => new RegexConsumer(keyword, keyword)):_*)
+    }
+  }
+}
+
+object keywords {
+  def apply(words: String*): MultiRegexConsumer = {
+    new MultiRegexConsumer(words.map((keyword: String) => new RegexConsumer(keyword, keyword)):_*)
   }
 }
