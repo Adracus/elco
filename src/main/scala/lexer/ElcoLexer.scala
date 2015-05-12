@@ -1,7 +1,7 @@
-package lexing
+package lexer
 
-import lexing.MultiRegexConsumer.RichRegexConsumer
-import lexing.LexerDSL.LexerWithDSL
+import MultiRegexConsumer.RichRegexConsumer
+import LexerDSL.LexerWithDSL
 
 /**
  * Created by axel on 11/05/15.

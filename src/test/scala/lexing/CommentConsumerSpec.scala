@@ -1,5 +1,6 @@
 package lexing
 
+import lexer.{LexingState, CommentConsumer, Position, UnclosedException}
 import org.scalatest._
 
 /**

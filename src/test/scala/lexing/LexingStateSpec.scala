@@ -1,5 +1,6 @@
 package lexing
 
+import lexer.{LexingState, Position}
 import org.scalatest.{Matchers, FunSpec}
 
 /**

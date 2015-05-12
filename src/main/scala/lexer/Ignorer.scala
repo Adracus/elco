@@ -1,4 +1,4 @@
-package lexing
+package lexer
 
 /**
  * Created by axel on 11/05/15.
