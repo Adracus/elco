@@ -1,5 +1,7 @@
 package de.adracus.elco.parser.production
 
+import de.adracus.elco.lexer.core.TokenStream
+import de.adracus.elco.lexer.production.ElcoLexer
 import de.adracus.elco.parser.core.Grammar
 
 /**
@@ -14,5 +16,6 @@ class ElcoGrammar extends Grammar {
 object ElcoGrammar extends App {
   val g = new ElcoGrammar
 
-  println(g.toString)
+  val stream = new TokenStream(new ElcoLexer("some = 1 + 2"))
+  g parse stream
 }

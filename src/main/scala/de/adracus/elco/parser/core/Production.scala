@@ -15,6 +15,8 @@ case class Production(statements: Statement*) {
   def |(statement: Statement) = or(statement)
 
   override def toString = statements mkString " & "
+
+  def references = (statements collect { case r: Reference => r}).toSet
 }
 
 object Production {

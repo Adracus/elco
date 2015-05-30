@@ -5,4 +5,6 @@ package de.adracus.elco.parser.core
  */
 class ProductionList(productions: Production*) {
   override def toString = productions.mkString(" | ")
+
+  def references = productions.flatMap(_.references).toSet
 }

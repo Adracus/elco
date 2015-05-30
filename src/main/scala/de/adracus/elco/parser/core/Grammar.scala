@@ -1,5 +1,7 @@
 package de.adracus.elco.parser.core
 
+import de.adracus.elco.lexer.core.TokenStream
+
 import scala.collection.mutable
 
 /**
@@ -7,6 +9,14 @@ import scala.collection.mutable
  */
 class Grammar {
   private val symbols = new mutable.HashMap[String, NonTerminal]()
+
+  private def check(): Unit = {
+    val references = symbols.values.flatMap(_.productions.references).toSet
+    val names = symbols.keySet
+    for (reference <- references) {
+      require(names contains reference.name, s"Reference to ${reference.name} has to be defined")
+    }
+  }
 
   def add(name: String, nonTerminal: NonTerminal) = {
     symbols(name) = nonTerminal
@@ -35,6 +45,10 @@ class Grammar {
     }
 
     def := (productions: ProductionList) = build(productions)
+  }
+
+  def parse(tokenStream: TokenStream) = {
+    check()
   }
 
   override def toString = symbols.values.mkString("\n")

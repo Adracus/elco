@@ -1,7 +1,6 @@
 package de.adracus.elco.lexer.core
 
 import de.adracus.elco.lexer.consumer.{RegexConsumer, RegexIgnorer, Consumer}
-import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
 import scala.util.matching.Regex
 
