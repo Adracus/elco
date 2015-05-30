@@ -5,9 +5,9 @@ package util
  */
 object IterableUtil {
   implicit class RichIterable[+A](val iterable: Iterable[A]) {
-    def firstWhere(pred: A => Boolean): Option[A] = {
+    def firstWhere(predicate: A => Boolean): Option[A] = {
       for (e <- iterable) {
-        if(pred(e)) return Some(e)
+        if(predicate(e)) return Some(e)
       }
       None
     }

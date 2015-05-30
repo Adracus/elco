@@ -8,7 +8,7 @@ import scala.util.matching.Regex
 class LexingText(val text: String, val newlineSymbol: String) {
   private val counter = new PositionCounter(newlineSymbol)
 
-  def pointsAt(string: String) = remaining.startsWith(string)
+  def pointsAt(string: String): Boolean = remaining.startsWith(string)
 
   def startMatch(regex: Regex) = s"^${regex.pattern}".r.findFirstIn(remaining)
 

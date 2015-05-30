@@ -1,6 +1,6 @@
 package de.adracus.elco.lexer.core
 
-import de.adracus.elco.lexer.consumer.{RegexIgnorer, Consumer}
+import de.adracus.elco.lexer.consumer.{RegexConsumer, RegexIgnorer, Consumer}
 import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
 import scala.util.matching.Regex
@@ -14,6 +14,12 @@ class Lexer(string: String, newlineSymbol: String = "\n") extends Iterator[Token
   def current = text.current
 
   def pointsAt(string: String) = text pointsAt string
+
+  def ignore(regex: String) = addConsumer(new RegexIgnorer(regex))
+
+  def symbol(symbol: String) = keyword(symbol)
+
+  def keyword(keyword: String): Unit = addConsumer(RegexConsumer.literal(keyword))
 
   def startMatch(regex: Regex) = text startMatch regex
 

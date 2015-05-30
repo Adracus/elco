@@ -1,11 +1,13 @@
 package de.adracus.elco.lexer.consumer
 
+import java.util.regex.Pattern
+
 import de.adracus.elco.lexer.core.{Hit, Match, Lexer}
 
 /**
  * Created by axel on 20/05/15.
  */
-class RegexConsumer(regex: String, val name: String, val transform: Option[String => Any]) extends Consumer {
+class RegexConsumer(regex: String, val name: String, val transform: Option[String => Any] = None) extends Consumer {
   val r = regex.r
 
   def tryMatch(lexer: Lexer): Option[Match] = {
@@ -21,4 +23,9 @@ class RegexConsumer(regex: String, val name: String, val transform: Option[Strin
       None
     }
   }
+}
+
+object RegexConsumer {
+  def literal(literal: String) = new RegexConsumer(
+    Pattern.quote(literal), literal.toUpperCase)
 }
