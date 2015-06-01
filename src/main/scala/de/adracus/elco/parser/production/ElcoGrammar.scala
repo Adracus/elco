@@ -1,27 +1,18 @@
 package de.adracus.elco.parser.production
 
+import de.adracus.elco.lexer.core.TokenStream
+import de.adracus.elco.lexer.production.ElcoLexer
 import de.adracus.elco.parser.core.{Epsilon, Grammar}
 
 /**
  * Created by axel on 26/05/15.
  */
-class ElcoGrammar extends Grammar {
-  'E := 'T & 'Et
+object ElcoGrammar extends Grammar with App {
+  'Statement -> 'Number & "+" & 'Number
+  'Number    -> "INTEGER" | "DOUBLE"
 
-  'Et := "+" & 'T & 'Et | Epsilon
+  val lexer = new ElcoLexer("1 + 2")
+  val stream = new TokenStream(lexer)
 
-  'T := 'F & 'Tt
-
-  'Tt := "*" & 'F & 'Tt | Epsilon
-
-  'F := "(" & 'E & ")"
-
-  'F := "id"
-}
-
-object ElcoGrammar extends App {
-  val g = new ElcoGrammar
-
-  println(g.first)
-  println(g.follow)
+  parse(stream)
 }

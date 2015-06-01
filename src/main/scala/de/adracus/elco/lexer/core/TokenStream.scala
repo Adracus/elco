@@ -8,10 +8,13 @@ class TokenStream(val lexer: Lexer) {
 
   def consume() = _current = _current.drop(1)
 
-  def lookahead(n: Int = 0) = {
-    while (_current.length < n) {
+  def lookahead: Token = lookahead()
+
+  def lookahead(n: Int = 0): Token = {
+    while (_current.length < n + 1) {
       _current = _current :+ lexer.next()
     }
+    _current(n)
   }
 
   def hasNext: Boolean = lexer.hasNext

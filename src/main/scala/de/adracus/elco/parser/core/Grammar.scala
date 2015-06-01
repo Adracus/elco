@@ -1,8 +1,9 @@
 package de.adracus.elco.parser.core
 
-import de.adracus.elco.lexer.core.TokenStream
+import de.adracus.elco.lexer.core.{Token, TokenStream}
 
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 /**
  * Created by axel on 26/05/15.
@@ -53,9 +54,8 @@ class Grammar {
     }
 
     def := (productions: ProductionList) = build(productions)
-  }
 
-  def parse(tokenStream: TokenStream) = {
+    def -> (productions: ProductionList) = build(productions)
   }
 
   private def firstStep(first: Map[String, Set[Statement]], statements: List[Statement]) = {
@@ -156,5 +156,32 @@ class Grammar {
     } while (old != follow)
 
     Map[String, Set[Statement]]() ++ follow
+  }
+
+  def firstOf(rule: Rule) = firstStep(first, rule.toList)
+
+  def ruleFor(nonTerminal: NonTerminal, token: Token) = {
+    val possibleRules = rules(nonTerminal)
+    possibleRules.find(firstOf(_).contains(Terminal(token.name))).get
+  }
+
+  def parse(tokenStream: TokenStream) = {
+    val stack = new mutable.Stack[Statement]()
+    stack.push(End, startSymbol)
+
+    while (!stack.isEmpty) {
+      val token = tokenStream.lookahead
+      stack.pop() match {
+        case Terminal(name) =>
+          if (token.name == name) tokenStream.consume()
+          else throw new Exception(name + " expected!")
+        case nt: NonTerminal =>
+          val rule = ruleFor(nt, token)
+          stack.pushAll(rule.toSeq.reverse)
+        case End =>
+          if ("EOF" == token.name) tokenStream.consume()
+          else throw new Exception("Unexpected sequence")
+      }
+    }
   }
 }
