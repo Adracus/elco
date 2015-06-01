@@ -11,6 +11,9 @@ class Grammar {
   protected val rules = new mutable.HashMap[NonTerminal, Set[Rule]]()
   protected val statements = new mutable.LinkedHashMap[String, Statement]()
 
+  lazy val first = computeFirst()
+  lazy val follow = computeFollow(first)
+
   def add(rule: Rule): Unit = {
     val nonTerminal = rule.nonTerminal
     addStatement(nonTerminal)
@@ -55,7 +58,7 @@ class Grammar {
   def parse(tokenStream: TokenStream) = {
   }
 
-  def firstStep(first: Map[String, Set[Statement]], statements: List[Statement]) = {
+  private def firstStep(first: Map[String, Set[Statement]], statements: List[Statement]) = {
     def inner(acc: Set[Statement], statements: List[Statement]): Set[Statement] = statements match {
       case Nil => acc + Epsilon
       case st :: tail =>
@@ -71,7 +74,7 @@ class Grammar {
 
   override def toString = rules.mkString("\n")
 
-  def computeFirst() = {
+  private def computeFirst() = {
     val first = new mutable.HashMap[String, Set[Statement]]().withDefaultValue(Set.empty)
 
     def addToFirst(key: Statement, values: Statement*) = {
@@ -105,7 +108,7 @@ class Grammar {
     Map[String, Set[Statement]]() ++ first
   }
 
-  def computeFollow(first: Map[String, Set[Statement]]) = {
+  private def computeFollow(first: Map[String, Set[Statement]]) = {
     val follow = new mutable.HashMap[String, Set[Statement]]().withDefaultValue(Set.empty)
 
     def addToFollow(key: Statement, values: Statement*) = {
@@ -150,10 +153,6 @@ class Grammar {
       for (ruleSet <- rules.values; rule <- ruleSet) {
         followStep(rule.production.toList, rule.nonTerminal)
       }
-      follow.foreach { tuple =>
-        println(tuple._1 + " -> " + tuple._2.mkString(", "))
-      }
-      println("")
     } while (old != follow)
 
     Map[String, Set[Statement]]() ++ follow

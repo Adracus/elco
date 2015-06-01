@@ -22,12 +22,6 @@ class ElcoGrammar extends Grammar {
 object ElcoGrammar extends App {
   val g = new ElcoGrammar
 
-  val first = g.computeFirst()
-  println(first)
-
-  println()
-
-  val follow = g.computeFollow(first)
-
-  println(follow)
+  println(g.first)
+  println(g.follow)
 }
