@@ -11,20 +11,16 @@ sealed trait Statement {
 
 sealed trait BaseTerminal extends Statement
 
-case class Terminal(name: String) extends BaseTerminal {
-  def t = this
-}
+case class Terminal(name: String) extends BaseTerminal
 
 object Epsilon extends BaseTerminal {
   override val name = "Epsilon"
 }
 
-sealed trait BaseNonTerminal extends Statement
-
-case class Reference(name: String) extends BaseNonTerminal {
-  def this(symbol: Symbol) = this(symbol.name)
+object End extends BaseTerminal {
+  override val name = "$"
 }
 
-case class NonTerminal(name: String, productions: ProductionList) extends BaseNonTerminal {
-  override def toString = s"$name := $productions"
+case class NonTerminal(name: String) extends Statement {
+  def this(symbol: Symbol) = this(symbol.name)
 }

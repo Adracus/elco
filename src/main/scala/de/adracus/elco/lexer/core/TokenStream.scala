@@ -6,13 +6,9 @@ package de.adracus.elco.lexer.core
 class TokenStream(val lexer: Lexer) {
   private var _current: Seq[Token] = Seq.empty
 
-  def current = {
-    lookahead(0)
-  }
-
   def consume() = _current = _current.drop(1)
 
-  def lookahead(n: Int) = {
+  def lookahead(n: Int = 0) = {
     while (_current.length < n) {
       _current = _current :+ lexer.next()
     }
