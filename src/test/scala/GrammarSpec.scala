@@ -1,4 +1,4 @@
-import de.adracus.elco.parser.core._
+import de.adracus.elco.grammar.core._
 import org.scalatest.{Matchers, FunSpec}
 
 /**

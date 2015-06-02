@@ -1,4 +1,4 @@
-package de.adracus.elco.parser.core
+package de.adracus.elco.grammar.core
 
 /**
  * Created by axel on 26/05/15.

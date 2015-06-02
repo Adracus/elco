@@ -1,4 +1,4 @@
-package de.adracus.elco.parser.core
+package de.adracus.elco.grammar.core
 
 import de.adracus.elco.lexer.core.{Token, TokenStream}
 
@@ -54,8 +54,6 @@ class Grammar {
     }
 
     def := (productions: ProductionList) = build(productions)
-
-    def -> (productions: ProductionList) = build(productions)
   }
 
   private def firstStep(first: Map[String, Set[Statement]], statements: List[Statement]) = {
@@ -171,17 +169,25 @@ class Grammar {
 
     while (!stack.isEmpty) {
       val token = tokenStream.lookahead
-      stack.pop() match {
+      val top = stack.pop()
+      top match {
         case Terminal(name) =>
           if (token.name == name) tokenStream.consume()
-          else throw new Exception(name + " expected!")
+          else throw Unexpected(Terminal(name), token)
         case nt: NonTerminal =>
           val rule = ruleFor(nt, token)
           stack.pushAll(rule.toSeq.reverse)
         case End =>
           if ("EOF" == token.name) tokenStream.consume()
-          else throw new Exception("Unexpected sequence")
+          else throw Unexpected(End, token)
+        case _ => Unexpected(Epsilon, token)
       }
     }
+
+    println("Valid sequence")
+  }
+
+  case class Unexpected(expected: Statement, actual: Token) extends Exception {
+    override def toString = s"Expected '$expected' but got '$actual'"
   }
 }
