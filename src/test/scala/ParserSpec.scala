@@ -1,10 +1,11 @@
 import de.adracus.elco.grammar.core._
+import de.adracus.elco.parser.Parser
 import org.scalatest.{Matchers, FunSpec}
 
 /**
  * Created by axel on 01/06/15.
  */
-class GrammarSpec extends FunSpec with Matchers {
+class ParserSpec extends FunSpec with Matchers {
   def t(value: String) = Terminal(value)
 
   object TestGrammar extends Grammar {
@@ -21,10 +22,12 @@ class GrammarSpec extends FunSpec with Matchers {
     'F := "id"
   }
 
+  val parser = new Parser(TestGrammar)
+
   describe("Grammar") {
     describe("first") {
       it("should correctly calculate the first set") {
-        assert(TestGrammar.first == Map(
+        assert(parser.first == Map(
           "E" -> Set[Statement](t("("), t("id")),
           "T" -> Set[Statement](t("("), t("id")),
           "F" -> Set[Statement](t("("), t("id")),
@@ -35,7 +38,7 @@ class GrammarSpec extends FunSpec with Matchers {
 
     describe("follow") {
       it("should correctly calculate the follow set") {
-        assert(TestGrammar.follow == Map(
+        assert(parser.follow == Map(
           "E" -> Set(End, t(")")),
           "T" -> Set(t("+"), End, t(")")),
           "F" -> Set(t("*"), t("+"), End, t(")")),
