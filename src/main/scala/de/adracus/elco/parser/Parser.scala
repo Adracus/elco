@@ -115,6 +115,28 @@ class Parser(val grammar: Grammar) {
     possibleRules.find(firstOf(_).contains(Terminal(token.name))).get
   }
 
+  def computeItemSets() = {
+    val rules = grammar.rules.groupBy(_.nonTerminal).mapValues(Set() ++ _)
+
+    val startingRule = grammar.rules.find(_.nonTerminal == grammar.startSymbol).get
+    val itemSets = new mutable.HashSet() + ItemSet.buildSet(Set(Item.start(startingRule)), rules)
+
+    var old: Set[ItemSet] = null
+    do {
+      old = Set() ++ itemSets
+      val addition = mutable.HashSet[ItemSet]()
+
+      for(itemSet <- itemSets) {
+        addition ++= itemSet.advance(rules)
+      }
+
+      itemSets ++= addition
+    } while (old != itemSets)
+
+    itemSets
+  }
+
   lazy val first = computeFirst()
   lazy val follow = computeFollow(first)
+  lazy val itemSets = computeItemSets()
 }

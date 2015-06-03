@@ -4,6 +4,9 @@ package de.adracus.elco.grammar.core
  * Created by axel on 26/05/15.
  */
 case class Production(statements: Statement*) extends Iterable[Statement] {
+  require(!statements.isEmpty, message = "At least one production has to be present")
+  require(statements.filter(_ == Epsilon).lengthCompare(2) < 0, message = "Epsilon can only be present once")
+
   def apply(n: Int) = statements(n)
 
   def contains(statement: Statement) = statements.contains(statement)
