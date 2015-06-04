@@ -1,6 +1,6 @@
 import de.adracus.elco.grammar.core._
 import de.adracus.elco.parser.{Item, ItemSet, Parser}
-import org.scalatest.{Matchers, FunSpec}
+import org.scalatest.{FunSpec, Matchers}
 
 /**
  * Created by axel on 01/06/15.

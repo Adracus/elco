@@ -1,6 +1,6 @@
 package de.adracus.elco.lexer.consumer
 
-import de.adracus.elco.lexer.core.{Empty, Match, Lexer}
+import de.adracus.elco.lexer.core.{Empty, Lexer, Match}
 
 /**
  * Created by axel on 20/05/15.

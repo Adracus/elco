@@ -1,6 +1,6 @@
-import de.adracus.elco.lexer.consumer.{RegexIgnorer, RegexConsumer}
-import de.adracus.elco.lexer.core.{UnrecognizedSymbol, Position, Token, Lexer}
-import org.scalatest.{Matchers, FunSpec}
+import de.adracus.elco.lexer.consumer.{RegexConsumer, RegexIgnorer}
+import de.adracus.elco.lexer.core.{Lexer, Position, Token, UnrecognizedSymbol}
+import org.scalatest.{FunSpec, Matchers}
 
 /**
  * Created by axel on 20/05/15.

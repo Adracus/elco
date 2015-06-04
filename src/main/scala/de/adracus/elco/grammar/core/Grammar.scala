@@ -1,9 +1,8 @@
 package de.adracus.elco.grammar.core
 
-import de.adracus.elco.lexer.core.{Token, TokenStream}
+import de.adracus.elco.lexer.core.Token
 
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
 
 /**
  * Created by axel on 26/05/15.

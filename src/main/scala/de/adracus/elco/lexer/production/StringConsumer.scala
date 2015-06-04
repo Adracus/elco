@@ -3,7 +3,7 @@ package de.adracus.elco.lexer.production
 import java.util.regex.Pattern
 
 import de.adracus.elco.lexer.consumer.Consumer
-import de.adracus.elco.lexer.core.{Hit, Unclosed, Match, Lexer}
+import de.adracus.elco.lexer.core.{Hit, Lexer, Match, Unclosed}
 
 /**
  * Created by axel on 21/05/15.

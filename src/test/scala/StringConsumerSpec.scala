@@ -1,6 +1,6 @@
-import de.adracus.elco.lexer.core.{Position, Unclosed, Hit, Lexer}
+import de.adracus.elco.lexer.core.{Hit, Lexer, Position, Unclosed}
 import de.adracus.elco.lexer.production.StringConsumer
-import org.scalatest.{Matchers, FunSpec}
+import org.scalatest.{FunSpec, Matchers}
 
 /**
  * Created by axel on 21/05/15.

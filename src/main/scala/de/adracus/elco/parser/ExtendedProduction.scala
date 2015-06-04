@@ -1,6 +1,6 @@
 package de.adracus.elco.parser
 
-import de.adracus.elco.grammar.core.{Production}
+import de.adracus.elco.grammar.core.Production
 
 /**
  * Created by axel on 04/06/15.

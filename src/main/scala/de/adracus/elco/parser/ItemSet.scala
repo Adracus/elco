@@ -1,6 +1,6 @@
 package de.adracus.elco.parser
 
-import de.adracus.elco.grammar.core.{Statement, Rule, NonTerminal}
+import de.adracus.elco.grammar.core.{NonTerminal, Rule, Statement}
 
 sealed trait BaseItemSet
 /**

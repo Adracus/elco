@@ -1,8 +1,6 @@
 package de.adracus.elco.parser
 
-import de.adracus.elco.grammar.core.{NonTerminal, Statement, Grammar}
-
-import scala.collection.mutable
+import de.adracus.elco.grammar.core.{Grammar, NonTerminal}
 
 /**
  * Created by axel on 04/06/15.
