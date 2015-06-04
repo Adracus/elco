@@ -1,11 +1,11 @@
 import de.adracus.elco.grammar.core._
-import de.adracus.elco.parser.{Item, ItemSet, Parser}
+import de.adracus.elco.parser.{ActionTableCalculator, Item, ItemSet, Parser}
 import org.scalatest.{FunSpec, Matchers}
 
 /**
  * Created by axel on 01/06/15.
  */
-class ParserSpec extends FunSpec with Matchers {
+class ActionTableCalculatorSpec extends FunSpec with Matchers {
   def t(value: String) = Terminal(value)
 
   object TestGrammar extends Grammar {
@@ -29,10 +29,10 @@ class ParserSpec extends FunSpec with Matchers {
     'V := "x" | "*" & 'E
   }
 
-  val parser = new Parser(TestGrammar)
-  var itemParser = new Parser(ItemSetGrammar)
+  val parser = new ActionTableCalculator(TestGrammar)
+  var itemParser = new ActionTableCalculator(ItemSetGrammar)
 
-  println(itemParser.reducedExtendedGrammar())
+  println(itemParser.computeActionTable())
 
   describe("Grammar") {
     describe("first") {

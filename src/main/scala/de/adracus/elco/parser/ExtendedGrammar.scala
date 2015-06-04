@@ -18,5 +18,7 @@ class ExtendedGrammar(val startSymbol: NonTerminal, val rules: Set[ExtendedRule]
     rule.nonTerminal.statement == startSymbol && rule.nonTerminal.end.asInstanceOf[ItemSet].isEmpty
   }.get
 
+  def statements = rules.flatMap(_.production.statements)
+
   override def toString() = rules.mkString("\n")
 }
