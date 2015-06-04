@@ -2,10 +2,11 @@ package de.adracus.elco.parser
 
 import de.adracus.elco.grammar.core.{Statement, Rule, NonTerminal}
 
+sealed trait BaseItemSet
 /**
  * Created by axel on 03/06/15.
  */
-case class ItemSet(items: Set[Item]) extends Iterable[Item] {
+case class ItemSet(items: Set[Item]) extends Iterable[Item] with BaseItemSet {
   def canAdvance = items.forall(!_.isAtEnd)
 
   def advanceSymbols = items.flatMap(_.next)
@@ -16,14 +17,15 @@ case class ItemSet(items: Set[Item]) extends Iterable[Item] {
 
   def advanceBy(statement: Statement, rules: Map[NonTerminal, Set[Rule]]) = {
     val filtered = items.filter(_.pointsAt(statement)).map(_.advance())
-    val set = ItemSet.buildSet(filtered, rules)
-    set
+    ItemSet.buildSet(filtered, rules)
   }
 
   override def iterator: Iterator[Item] = items.iterator
 
-  override def toString = items.mkString("\n")
+  override def toString() = items.mkString("\n")
 }
+
+object FinalSet extends BaseItemSet
 
 object ItemSet {
   def buildSet(start: Set[Item], rules: Map[NonTerminal, Set[Rule]]) =  {
@@ -40,4 +42,6 @@ object ItemSet {
 
     ItemSet(inner(Set.empty, start))
   }
+
+  def empty = ItemSet(Set.empty)
 }

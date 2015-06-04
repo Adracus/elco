@@ -23,7 +23,7 @@ class Parser(val grammar: Grammar) {
     inner(Set.empty, statements)
   }
 
-  private def computeFirst() = {
+  private def computeFirst(grammar: Grammar) = {
     val first = new mutable.HashMap[String, Set[Statement]]().withDefaultValue(Set.empty)
     val rules = grammar.rules.groupBy(_.nonTerminal)
 
@@ -58,7 +58,7 @@ class Parser(val grammar: Grammar) {
     Map[String, Set[Statement]]() ++ first
   }
 
-  private def computeFollow(first: Map[String, Set[Statement]]) = {
+  private def computeFollow(grammar: Grammar, first: Map[String, Set[Statement]]) = {
     val follow = new mutable.HashMap[String, Set[Statement]]().withDefaultValue(Set.empty)
 
     def addToFollow(key: Statement, values: Statement*) = {
@@ -115,7 +115,7 @@ class Parser(val grammar: Grammar) {
     possibleRules.find(firstOf(_).contains(Terminal(token.name))).get
   }
 
-  def computeItemSets() = {
+  def computeItemSets(grammar: Grammar) = {
     val rules = grammar.rules.groupBy(_.nonTerminal).mapValues(Set() ++ _)
 
     val startingRule = grammar.rules.find(_.nonTerminal == grammar.startSymbol).get
@@ -136,7 +136,52 @@ class Parser(val grammar: Grammar) {
     itemSets
   }
 
-  lazy val first = computeFirst()
-  lazy val follow = computeFollow(first)
-  lazy val itemSets = computeItemSets()
+  def computeExtendedGrammar(grammar: Grammar) = {
+    val rules = grammar.rules.groupBy(_.nonTerminal).mapValues(Set() ++ _)
+
+    val itemSets = computeItemSets(grammar).toSeq
+
+    def n(itemSet: ItemSet) = if(itemSets.contains(itemSet)) itemSet else FinalSet
+
+    def extend(itemSet: ItemSet, item: Item) = {
+      val nonTerminal = item.rule.nonTerminal
+
+      def inner(acc: Seq[ExtendedStatement], state: ItemSet, remaining: List[Statement]): Seq[ExtendedStatement] = remaining match {
+        case Nil => acc
+        case head :: tail =>
+          val next = state.advanceBy(head, rules)
+          val statement = ExtendedStatement(state, head, next)
+          inner(acc :+ statement, next, tail)
+      }
+
+      val newNonTerminal = inner(Seq.empty, itemSet, List(nonTerminal)).head.asInstanceOf[ExtendedNonTerminal]
+      val newStatements = inner(Seq.empty, itemSet, item.rule.toList)
+      ExtendedRule(newNonTerminal, new ExtendedProduction(newStatements:_*))
+    }
+
+    val extendedBase = itemSets.flatMap { itemSet =>
+      itemSet.filter(_.isAtStart).map { item =>
+        extend(itemSet, item)
+      }
+    }
+
+    new ExtendedGrammar(extendedBase.toSet)
+  }
+
+  def computeTranslationTable(grammar: Grammar) = {
+    val rules = grammar.rules.groupBy(_.nonTerminal).mapValues(Set() ++ _)
+
+    val result = new mutable.HashMap[(ItemSet, Statement), ItemSet]()
+    for (itemSet <- itemSets; statement <- grammar.statements) {
+      val advanced = itemSet.advanceBy(statement, rules)
+      if (advanced.nonEmpty) {
+        result((itemSet, statement)) = advanced
+      }
+    }
+    result
+  }
+
+  lazy val first = computeFirst(grammar)
+  lazy val follow = computeFollow(grammar, first)
+  lazy val itemSets = computeItemSets(grammar)
 }

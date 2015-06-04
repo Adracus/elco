@@ -10,6 +10,8 @@ case class Item(marker: Int, rule: Rule) {
 
   def after = rule.drop(marker)
 
+  def isAtStart = 0 == marker
+
   def isAtEnd = marker == rule.length
 
   def pointsAt(statement: Statement) = if (isAtEnd) false else next.get == statement
@@ -25,7 +27,7 @@ case class Item(marker: Int, rule: Rule) {
     Item(marker + 1, rule)
   }
 
-  override def toString = before.mkString(" ") + " . " + after.mkString(" ")
+  override def toString = rule.nonTerminal.name + " := " + before.mkString(" ") + " . " + after.mkString(" ")
 }
 
 object Item {

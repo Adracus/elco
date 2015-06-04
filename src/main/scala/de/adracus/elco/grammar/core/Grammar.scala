@@ -8,7 +8,7 @@ import scala.collection.mutable.ListBuffer
 /**
  * Created by axel on 26/05/15.
  */
-class Grammar {
+class Grammar() {
   val rules = new mutable.HashSet[Rule]()
   protected val _statements = new mutable.LinkedHashMap[String, Statement]()
 
@@ -59,5 +59,13 @@ class Grammar {
 
   case class Unexpected(expected: Statement, actual: Token) extends Exception {
     override def toString = s"Expected '$expected' but got '$actual'"
+  }
+}
+
+object Grammar {
+  def fromRules(rules: Seq[Rule]) = {
+    val grammar = new Grammar()
+    rules.foreach(grammar.add)
+    grammar
   }
 }

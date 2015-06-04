@@ -32,6 +32,8 @@ class ParserSpec extends FunSpec with Matchers {
   val parser = new Parser(TestGrammar)
   var itemParser = new Parser(ItemSetGrammar)
 
+  println(itemParser.computeExtendedGrammar(ItemSetGrammar))
+
   describe("Grammar") {
     describe("first") {
       it("should correctly calculate the first set") {
