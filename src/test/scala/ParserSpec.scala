@@ -32,7 +32,7 @@ class ParserSpec extends FunSpec with Matchers {
   val parser = new Parser(TestGrammar)
   var itemParser = new Parser(ItemSetGrammar)
 
-  println(itemParser.computeExtendedGrammar(ItemSetGrammar))
+  println(itemParser.reducedExtendedGrammar())
 
   describe("Grammar") {
     describe("first") {

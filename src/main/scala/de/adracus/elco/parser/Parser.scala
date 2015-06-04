@@ -119,7 +119,7 @@ class Parser(val grammar: Grammar) {
     val rules = grammar.rules.groupBy(_.nonTerminal).mapValues(Set() ++ _)
 
     val startingRule = grammar.rules.find(_.nonTerminal == grammar.startSymbol).get
-    val itemSets = new mutable.HashSet() + ItemSet.buildSet(Set(Item.start(startingRule)), rules)
+    val itemSets = new mutable.LinkedHashSet[ItemSet]() + ItemSet.buildSet(Set(Item.start(startingRule)), rules)
 
     var old: Set[ItemSet] = null
     do {
@@ -140,8 +140,6 @@ class Parser(val grammar: Grammar) {
     val rules = grammar.rules.groupBy(_.nonTerminal).mapValues(Set() ++ _)
 
     val itemSets = computeItemSets(grammar).toSeq
-
-    def n(itemSet: ItemSet) = if(itemSets.contains(itemSet)) itemSet else FinalSet
 
     def extend(itemSet: ItemSet, item: Item) = {
       val nonTerminal = item.rule.nonTerminal
@@ -165,7 +163,7 @@ class Parser(val grammar: Grammar) {
       }
     }
 
-    new ExtendedGrammar(extendedBase.toSet)
+    new ExtendedGrammar(grammar.startSymbol, extendedBase.toSet)
   }
 
   def computeTranslationTable(grammar: Grammar) = {
@@ -181,7 +179,69 @@ class Parser(val grammar: Grammar) {
     result
   }
 
+  def computeActionTable() = {
+    val result = new mutable.HashMap[(ItemSet, Statement), Action]() ++ translationTable.map { tuple =>
+      if (tuple._1._2.isInstanceOf[NonTerminal]) (tuple._1, Goto(tuple._2))
+      else (tuple._1, Shift(tuple._2))
+    }
+    for (itemSet <- itemSets) {
+      if (itemSet.hasItemAtEnd) {
+        result((itemSet, End)) = Accept
+      }
+    }
+    result
+  }
+
+  def reducedExtendedGrammar() = {
+    val extendedGrammar = computeExtendedGrammar(grammar)
+    val eGrammar = extendedGrammar.toEGrammar()
+    val first = computeFirst(eGrammar)
+    val follow = computeFollow(eGrammar, first)
+
+    def eFollow(extendedNonTerminal: ExtendedNonTerminal) = {
+      follow(extendedNonTerminal.eStatement.name)
+    }
+
+    val mappedRules = extendedGrammar.rules.foldLeft(new mutable.HashMap[ExtendedRule, Set[Statement]]())
+    { (acc, rule) =>
+      acc.put(rule, eFollow(rule.nonTerminal))
+      acc
+    }
+
+    mappedRules.remove(extendedGrammar.startingRule)
+
+    val result = new mutable.HashMap[(BaseItemSet, Statement), Rule]()
+
+    def merge(rule: ExtendedRule) = {
+      def inner(follow: Set[Statement], rules: List[ExtendedRule]): Unit = rules match {
+        case Nil =>
+          mappedRules.remove(rule)
+          for (statement <- follow) {
+            result((rule.finalSet, statement)) = rule.toRule()
+          }
+        case head :: tail =>
+          if (rule.toRule() == head.toRule() && rule.finalSet == head.finalSet) {
+            val addition = mappedRules(head)
+            mappedRules.remove(head)
+            inner(follow ++ addition, tail)
+          } else {
+            inner(follow, tail)
+          }
+      }
+
+      inner(mappedRules(rule), mappedRules.keys.toList)
+    }
+
+    while (mappedRules.nonEmpty) {
+      merge(mappedRules.head._1)
+    }
+
+    result
+  }
+
   lazy val first = computeFirst(grammar)
   lazy val follow = computeFollow(grammar, first)
   lazy val itemSets = computeItemSets(grammar)
+  lazy val translationTable = computeTranslationTable(grammar)
+  lazy val actionTable = computeActionTable()
 }

@@ -8,5 +8,7 @@ import de.adracus.elco.grammar.core.{Production}
 case class ExtendedProduction(statements: ExtendedStatement*) {
   def toProduction() = Production(statements.map(_.statement):_*)
 
+  def toEProduction() = Production(statements.map(_.eStatement):_*)
+
   def statementSet = statements.map(_.statement).toSet
 }

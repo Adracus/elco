@@ -29,7 +29,7 @@ class Grammar() {
 
   def statements = _statements.values
 
-  def startSymbol = _statements.head._2
+  def startSymbol = _statements.head._2.asInstanceOf[NonTerminal]
 
   implicit def symbolToBuilder(symbol: Symbol): RuleBuilder = new RuleBuilder(this, symbol.name)
 

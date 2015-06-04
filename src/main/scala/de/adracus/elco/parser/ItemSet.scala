@@ -20,6 +20,8 @@ case class ItemSet(items: Set[Item]) extends Iterable[Item] with BaseItemSet {
     ItemSet.buildSet(filtered, rules)
   }
 
+  def hasItemAtEnd = items.exists(_.isAtEnd)
+
   override def iterator: Iterator[Item] = items.iterator
 
   override def toString() = items.mkString("\n")
