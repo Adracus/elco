@@ -1,26 +1,25 @@
 package de.adracus.elco.grammar.core
 
-/**
- * Created by axel on 26/05/15.
- */
 sealed trait Statement {
   val name: String
 
   override def toString = name
 }
 
-sealed trait BaseTerminal extends Statement
+sealed trait Terminal extends Statement
 
-case class Terminal(name: String) extends BaseTerminal
+sealed trait Producable extends Statement
 
-object Epsilon extends BaseTerminal {
+sealed case class Word(name: String) extends Terminal with Producable
+
+object Epsilon extends Terminal with Producable {
   override val name = "Epsilon"
 }
 
-object End extends BaseTerminal {
+object End extends Terminal {
   override val name = "$"
 }
 
-case class NonTerminal(name: String) extends Statement {
+case class NonTerminal(name: String) extends Statement with Producable {
   def this(symbol: Symbol) = this(symbol.name)
 }

@@ -9,7 +9,7 @@ import scala.collection.mutable
  */
 class Grammar() {
   val rules = new mutable.HashSet[Rule]()
-  protected val _statements = new mutable.LinkedHashMap[String, Statement]()
+  protected val _statements = new mutable.LinkedHashMap[String, Producable]()
 
   def add(rule: Rule): Unit = {
     val nonTerminal = rule.nonTerminal
@@ -18,7 +18,7 @@ class Grammar() {
     rules += rule
   }
 
-  def addStatement(statement: Statement): Unit = {
+  def addStatement(statement: Producable): Unit = {
     val entry = _statements.get(statement.name)
     if (entry.isDefined) {
       require(entry.get == statement, message = s"Statement '${statement.name}' cannot be defined twice")
@@ -34,11 +34,11 @@ class Grammar() {
 
   implicit def stringToProduction(string: String): Production = Production.terminal(string)
 
-  implicit def statementToProduction(statement: Statement): Production = Production(statement)
+  implicit def statementToProduction(producable: Producable): Production = Production(Seq(producable))
 
   implicit def productionToList(production: Production): ProductionList = new ProductionList(production)
 
-  implicit def symbolToProduction(symbol: Symbol): Production = Production(NonTerminal(symbol.name))
+  implicit def symbolToProduction(symbol: Symbol): Production = Production(Seq(NonTerminal(symbol.name)))
 
   implicit def symbolToProductionList(symbol: Symbol): ProductionList = new ProductionList(symbolToProduction(symbol))
 

@@ -3,7 +3,7 @@ package de.adracus.elco.grammar.core
 /**
  * Created by axel on 26/05/15.
  */
-case class Production(statements: Statement*) extends Iterable[Statement] {
+case class Production(statements: Seq[Producable]) extends Iterable[Producable] {
   require(!statements.isEmpty, message = "At least one production has to be present")
   require(statements.filter(_ == Epsilon).lengthCompare(2) < 0, message = "Epsilon can only be present once")
 
@@ -11,15 +11,15 @@ case class Production(statements: Statement*) extends Iterable[Statement] {
 
   def contains(statement: Statement) = statements.contains(statement)
 
-  def and(production: Production) = Production(statements ++ production.statements:_*)
-  def and(statement: Statement) = Production(statements :+ statement:_*)
+  def and(production: Production) = Production(statements ++ production.statements)
+  def and(producable: Producable) = Production(statements :+ producable)
   def &(production: Production) = and(production)
-  def &(statement: Statement) = and(statement)
+  def &(producable: Producable) = and(producable)
 
   def or(production: Production) = new ProductionList(this, production)
-  def or(statement: Statement) =  new ProductionList(this, Production(statement))
+  def or(producable: Producable) = new ProductionList(this, Production(producable))
   def |(production: Production) = or(production)
-  def |(statement: Statement) = or(statement)
+  def |(producable: Producable) = or(producable)
 
   override def toString = statements mkString " & "
 
@@ -31,7 +31,7 @@ case class Production(statements: Statement*) extends Iterable[Statement] {
 
   def startsWithTerminal = {
     if (statements.isEmpty) false
-    else statements.head.isInstanceOf[BaseTerminal]
+    else statements.head.isInstanceOf[Terminal]
   }
 
   def terminalsAfter(nonTerminal: NonTerminal) = {
@@ -47,6 +47,6 @@ case class Production(statements: Statement*) extends Iterable[Statement] {
 }
 
 object Production {
-  def terminal(string: String) = Production(Terminal(string))
-  def nonTerminal(string: String) = Production(NonTerminal(string))
+  def terminal(string: String) = Production(Seq(Word(string)))
+  def nonTerminal(string: String) = Production(Seq(NonTerminal(string)))
 }
