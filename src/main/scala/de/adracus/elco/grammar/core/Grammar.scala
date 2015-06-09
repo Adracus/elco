@@ -8,7 +8,7 @@ import scala.collection.mutable
  * Created by axel on 26/05/15.
  */
 class Grammar() {
-  val rules = new mutable.HashSet[Rule]()
+  val rules = new mutable.LinkedHashSet[Rule]()
   protected val _statements = new mutable.LinkedHashMap[String, Producable]()
 
   def add(rule: Rule): Unit = {
@@ -28,7 +28,9 @@ class Grammar() {
 
   def statements = _statements.values
 
-  def startSymbol = _statements.head._2.asInstanceOf[NonTerminal]
+  def startRule = rules.head
+
+  def startSymbol = startRule.nonTerminal
 
   implicit def symbolToBuilder(symbol: Symbol): RuleBuilder = new RuleBuilder(this, symbol.name)
 
