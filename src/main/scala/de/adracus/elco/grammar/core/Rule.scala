@@ -6,7 +6,7 @@ package de.adracus.elco.grammar.core
 case class Rule(nonTerminal: NonTerminal, production: Production) extends Iterable[Producable] {
   override def toString = s"$nonTerminal := $production"
 
-  override def iterator: Iterator[Statement] = production.iterator
+  override def iterator: Iterator[Producable] = production.iterator
 
   def length = production.length
 }

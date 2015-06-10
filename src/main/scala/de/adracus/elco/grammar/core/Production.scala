@@ -17,13 +17,13 @@ case class Production(statements: Seq[Producable]) extends Iterable[Producable] 
   def &(producable: Producable) = and(producable)
 
   def or(production: Production) = new ProductionList(this, production)
-  def or(producable: Producable) = new ProductionList(this, Production(producable))
+  def or(producable: Producable) = new ProductionList(this, Production(Seq(producable)))
   def |(production: Production) = or(production)
   def |(producable: Producable) = or(producable)
 
   override def toString = statements mkString " & "
 
-  override def iterator: Iterator[Statement] = statements.iterator
+  override def iterator: Iterator[Producable] = statements.iterator
 
   def length = statements.length
 
