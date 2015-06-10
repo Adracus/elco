@@ -12,7 +12,7 @@ case class ItemSet(items: Set[Item]) {
   def advances(rules: Set[Rule]) = {
     pointingAt.map { producable =>
       val nextItems = items.filter(_.pointsAt(producable))
-      ItemSet.from(nextItems.map(_.advanced), rules)
+      (producable, ItemSet.from(nextItems.map(_.advanced), rules))
     }
   }
 
@@ -24,7 +24,7 @@ object ItemSet {
     @tailrec
     def recurse(acc: mutable.LinkedHashSet[ItemSet], next: List[ItemSet]): List[ItemSet] = next match {
       case head :: tail =>
-        val advances = head.advances(grammar.rules)
+        val advances = head.advances(grammar.rules).map(_._2)
         recurse(acc ++= advances, tail ++ (advances -- acc))
       case Nil => acc.toList
     }

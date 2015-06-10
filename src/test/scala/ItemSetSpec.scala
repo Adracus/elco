@@ -1,5 +1,5 @@
 import de.adracus.elco.grammar.core._
-import de.adracus.elco.parser.{Item, ItemSet}
+import de.adracus.elco.parser.{TransitionTable, Item, ItemSet}
 import org.scalatest.{Matchers, FunSpec}
 
 /**
@@ -36,7 +36,8 @@ class ItemSetSpec extends FunSpec with Matchers {
     describe("all") {
       it("should compute all item sets for the given grammar") {
         val sets = ItemSet.all(grammar)
-        println(sets)
+        val table = new TransitionTable(sets, grammar.rules)
+        println(table.transitions)
       }
     }
   }
