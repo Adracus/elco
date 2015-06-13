@@ -3,13 +3,15 @@ package de.adracus.elco.grammar.core
 /**
  * Created by axel on 26/05/15.
  */
-case class Production(statements: Seq[Producable]) extends Iterable[Producable] {
+case class Production(statements: List[Producable]) {
   require(!statements.isEmpty, message = "At least one production has to be present")
   require(statements.filter(_ == Epsilon).lengthCompare(2) < 0, message = "Epsilon can only be present once")
 
   def apply(n: Int) = statements(n)
 
-  def contains(statement: Statement) = statements.contains(statement)
+  def contains(producable: Producable) = statements.contains(producable)
+
+  def length = statements.length
 
   def and(production: Production) = Production(statements ++ production.statements)
   def and(producable: Producable) = Production(statements :+ producable)
@@ -17,15 +19,13 @@ case class Production(statements: Seq[Producable]) extends Iterable[Producable] 
   def &(producable: Producable) = and(producable)
 
   def or(production: Production) = new ProductionList(this, production)
-  def or(producable: Producable) = new ProductionList(this, Production(Seq(producable)))
+  def or(producable: Producable) = new ProductionList(this, Production(List(producable)))
   def |(production: Production) = or(production)
   def |(producable: Producable) = or(producable)
 
-  override def toString = statements mkString " & "
+  override def toString() = statements mkString " & "
 
-  override def iterator: Iterator[Producable] = statements.iterator
-
-  def length = statements.length
+  def iterator: Iterator[Producable] = statements.iterator
 
   def isEpsilonProduction = Epsilon :: Nil == statements
 
@@ -47,6 +47,6 @@ case class Production(statements: Seq[Producable]) extends Iterable[Producable] 
 }
 
 object Production {
-  def terminal(string: String) = Production(Seq(Word(string)))
-  def nonTerminal(string: String) = Production(Seq(NonTerminal(string)))
+  def terminal(string: String) = Production(List(Word(string)))
+  def nonTerminal(string: String) = Production(List(NonTerminal(string)))
 }

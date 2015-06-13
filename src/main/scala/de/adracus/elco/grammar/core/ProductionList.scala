@@ -6,7 +6,7 @@ package de.adracus.elco.grammar.core
 class ProductionList(productions: Production*) extends Iterable[Production] {
   override def toString = productions.mkString(" | ")
 
-  def contains(statement: Statement) = productions.exists(_.contains(statement))
+  def contains(producable: Producable) = productions.exists(_.contains(producable))
 
-  override def iterator: Iterator[Production] = productions.iterator
+  override def iterator = productions.iterator
 }

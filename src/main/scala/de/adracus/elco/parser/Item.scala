@@ -10,9 +10,13 @@ case class Item(marker: Int, rule: Rule) extends Iterable[Producable] {
 
   override def iterator: Iterator[Producable] = rule.iterator
 
-  def before = rule.drop(rule.length - marker)
+  def before = rule.slice(0, marker).toList
 
-  def after = rule.dropRight(marker)
+  def pointer = after.head
+
+  def pointerOption = after.headOption
+
+  def after = rule.slice(marker, rule.length)
 
   def pointsAt(producable: Producable) = {
     val afterOption = after.headOption
@@ -21,6 +25,10 @@ case class Item(marker: Int, rule: Rule) extends Iterable[Producable] {
   }
 
   def advanced = Item(marker + 1, rule)
+
+  def isAtStart = 0 == marker
+
+  def isAtEnd = rule.length == marker
 
   def nonTerminal = rule.nonTerminal
 

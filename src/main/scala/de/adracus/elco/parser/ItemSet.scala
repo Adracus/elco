@@ -8,31 +8,41 @@ import scala.collection.mutable
 /**
  * Created by axel on 09/06/15.
  */
-case class ItemSet(items: Set[Item]) {
+case class ItemSet(items: Set[Item]) extends Iterable[Item] {
   def advances(rules: Set[Rule]) = {
     pointingAt.map { producable =>
-      val nextItems = items.filter(_.pointsAt(producable))
-      (producable, ItemSet.from(nextItems.map(_.advanced), rules))
+      (producable, advanceBy(producable, rules))
     }
   }
 
+  def advanceBy(producable: Producable, rules: Set[Rule]) = {
+    val nextItems = items.filter(_.pointsAt(producable))
+    ItemSet.from(nextItems.map(_.advanced), rules)
+  }
+
   def pointingAt = items.flatMap(_.after.headOption)
+
+  def itemsAtStart = items.filter(_.isAtStart)
+
+  override def iterator: Iterator[Item] = items.iterator
 }
 
 object ItemSet {
   def all(grammar: Grammar) = {
-    @tailrec
-    def recurse(acc: mutable.LinkedHashSet[ItemSet], next: List[ItemSet]): List[ItemSet] = next match {
-      case head :: tail =>
-        val advances = head.advances(grammar.rules).map(_._2)
-        recurse(acc ++= advances, tail ++ (advances -- acc))
-      case Nil => acc.toList
-    }
-
     val start = ItemSet.from(grammar.startRule, grammar.rules)
     val startSet = new mutable.LinkedHashSet[ItemSet]()
     startSet += start
-    recurse(startSet, List(start))
+
+    def recurse(acc: mutable.LinkedHashSet[ItemSet], next: Set[ItemSet]): List[ItemSet] = next.toList match {
+      case head :: tail =>
+        val newItems = head.advances(grammar.rules).map(_._2)
+        val addition = newItems -- acc
+        recurse(acc ++ addition, tail.toSet ++ addition)
+
+      case Nil => acc.toList
+    }
+
+    recurse(startSet, startSet.toSet)
   }
 
   def from(rule: Rule, rules: Set[Rule]): ItemSet = from(Item.start(rule), rules)
@@ -41,26 +51,19 @@ object ItemSet {
 
   def from(items: Set[Item], rules: Set[Rule]): ItemSet = {
     @tailrec
-    def recurse(acc: Set[Item], done: Set[NonTerminal], next: List[Item]): ItemSet = next match {
-      case head :: tail =>
-        val afterOption = head.after.headOption
-        if (afterOption.isEmpty) recurse(acc, done, tail)
-        else {
-          val after = afterOption.get
-          after match {
-            case t: Terminal => recurse(acc, done, tail)
-            case nt: NonTerminal =>
-              if (done contains nt) recurse(acc, done, tail)
-              else {
-                val newItems = rules.filter(_.nonTerminal == nt).map(Item.start)
-                recurse(acc ++ newItems, done + nt, tail ++ newItems)
-              }
-          }
-        }
+    def recurse(acc: Set[Item], done: Set[NonTerminal], next: List[NonTerminal]): ItemSet = next match {
+      case nt :: tail =>
+        val newItems = rules.filter(_.nonTerminal == nt).map(Item.start)
+        val newNext = newItems.flatMap(_.headOption.collect {
+          case nt: NonTerminal if !done.contains(nt) => nt
+        })
+        recurse(acc ++ newItems, done ++ newNext, tail ++ newNext)
 
       case Nil => ItemSet(acc)
     }
 
-    recurse(items, Set.empty, items.toList)
+    recurse(items, Set.empty, items.map(_.pointerOption).collect {
+      case Some(nt: NonTerminal) => nt
+    }.toList)
   }
 }

@@ -14,7 +14,7 @@ class TransitionTable(itemSets: List[ItemSet], rules: Set[Rule]) {
   private def recurse(acc: Map[(ItemSet, Producable), ItemSet], next: List[ItemSet]): Map[(ItemSet, Producable), ItemSet] = next match {
     case head :: tail =>
       val advances = head.advances(rules).map {
-        case (statement, future) => ((head, statement), future)
+        case (statement: Producable, future) => ((head, statement), future)
       }
       recurse(acc ++ advances, tail)
 

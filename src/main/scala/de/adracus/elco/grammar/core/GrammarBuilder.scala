@@ -22,11 +22,11 @@ class GrammarBuilder() {
 
   implicit def stringToProduction(string: String): Production = Production.terminal(string)
 
-  implicit def statementToProduction(producable: Producable): Production = Production(Seq(producable))
+  implicit def statementToProduction(producable: Producable): Production = Production(List(producable))
 
   implicit def productionToList(production: Production): ProductionList = new ProductionList(production)
 
-  implicit def symbolToProduction(symbol: Symbol): Production = Production(Seq(NonTerminal(symbol.name)))
+  implicit def symbolToProduction(symbol: Symbol): Production = Production(List(NonTerminal(symbol.name)))
 
   implicit def symbolToProductionList(symbol: Symbol): ProductionList = new ProductionList(symbolToProduction(symbol))
 
@@ -48,10 +48,6 @@ class GrammarBuilder() {
   }
 
   override def toString = rules.mkString("\n")
-
-  case class Unexpected(expected: Statement, actual: Token) extends Exception {
-    override def toString = s"Expected '$expected' but got '$actual'"
-  }
 }
 
 object GrammarBuilder {
