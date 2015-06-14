@@ -39,8 +39,12 @@ class ItemSetSpec extends FunSpec with Matchers {
     describe("all") {
       it("should compute all item sets for the given grammar") {
         val sets = ItemSet.all(grammar)
+        val eGrammar = new ExtendedGrammar(grammar, sets.toSet)
+        val first = new FirstSet(eGrammar)
+        val follow = new FollowSet(eGrammar, first)
+        val reduced = new ReduceTable(eGrammar, follow)
 
-        println(sets)
+        println(reduced)
       }
     }
   }

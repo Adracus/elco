@@ -28,4 +28,8 @@ case class ExtendedProduction(statements: List[ExtendedProducable]) extends Iter
   }
 
   override def toString() = statements.mkString(" ")
+
+  def production = Production(statements.map(_.base).asInstanceOf[List[Producable]])
+
+  def lastSet = statements.last.end
 }

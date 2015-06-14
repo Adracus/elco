@@ -1,6 +1,6 @@
 package de.adracus.elco.parser
 
-import de.adracus.elco.grammar.core.{ExtendedTerminal, ExtendedProducable, ExtendedNonTerminal}
+import de.adracus.elco.grammar.core._
 
 /**
  * Created by axel on 10/06/15.
@@ -11,4 +11,6 @@ case class ExtendedRule(nonTerminal: ExtendedNonTerminal, production: ExtendedPr
   override def iterator = production.iterator
 
   override def toString() = s"$nonTerminal := $production"
+
+  def rule = Rule(nonTerminal.base, production.production)
 }

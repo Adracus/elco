@@ -33,9 +33,8 @@ class FollowSet(grammar: ExtendedGrammar, firstSet: FirstSet) {
     def followStep(statements: List[ExtendedStatement], producer: ExtendedNonTerminal) = {
       def inner(statements: List[ExtendedStatement]): Unit = statements match {
         case Nil =>
-        case st :: Nil =>
-          if (st.isInstanceOf[ExtendedNonTerminal])
-            addToFollow(st.asInstanceOf[ExtendedNonTerminal], follow(producer).toSeq:_*)
+        case (st: ExtendedNonTerminal) :: Nil =>
+            addToFollow(st, follow(producer).toSeq:_*)
         case st :: tail =>
           if (!st.isInstanceOf[ExtendedNonTerminal]) inner(tail)
           else {
@@ -77,4 +76,6 @@ class FollowSet(grammar: ExtendedGrammar, firstSet: FirstSet) {
   }
 
   val table = computeFollow(grammar, firstSet)
+
+  def apply(extendedNonTerminal: ExtendedNonTerminal) = table(extendedNonTerminal)
 }
