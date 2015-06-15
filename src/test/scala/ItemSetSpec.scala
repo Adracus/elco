@@ -1,4 +1,6 @@
 import de.adracus.elco.grammar.core._
+import de.adracus.elco.lexer.core.{TokenStream, Lexer}
+import de.adracus.elco.lexer.production.ElcoLexer
 import de.adracus.elco.parser._
 import org.scalatest.{Matchers, FunSpec}
 
@@ -38,9 +40,11 @@ class ItemSetSpec extends FunSpec with Matchers {
     
     describe("all") {
       it("should compute all item sets for the given grammar") {
-        val parseTable = ParseTable.generate(grammar)
+        val parser = Parser parsing grammar
+        val lexer = new ElcoLexer("1 + 1 + 2")
+        val stream = new TokenStream(lexer)
 
-        println(parseTable)
+        parser.parse(stream)
       }
     }
   }

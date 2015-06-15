@@ -14,6 +14,8 @@ class ActionTable(
                    enumerator: Enumerator[ItemSet],
                    reduceTable: ReduceTable) {
 
+  def apply(state: Int, statement: Statement) = table((state, statement))
+
   private def computeTable() = {
     val table = new mutable.HashMap[(Int, Statement), Action]()
     itemSets.filter(hasEndRule).foreach { itemSet =>

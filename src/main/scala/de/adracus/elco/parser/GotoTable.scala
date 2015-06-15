@@ -23,5 +23,7 @@ class GotoTable(transitionTable: TransitionTable, enumerator: Enumerator[ItemSet
     table.toMap
   }
 
+  def apply(state: Int, nonTerminal: NonTerminal) = table((state, nonTerminal))
+
   val table = computeTable()
 }

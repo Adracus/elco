@@ -15,6 +15,4 @@ sealed trait Transition extends Action {
   val state: Int
 }
 
-sealed case class Goto(state: Int) extends Transition
-
 sealed case class Shift(state: Int) extends Transition
