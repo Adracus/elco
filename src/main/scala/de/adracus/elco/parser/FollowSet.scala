@@ -2,7 +2,8 @@ package de.adracus.elco.parser
 
 import de.adracus.elco.grammar.core._
 
-import collection.mutable
+import scala.collection.mutable
+
 /**
  * Created by axel on 11/06/15.
  */
@@ -34,7 +35,7 @@ class FollowSet(grammar: ExtendedGrammar, firstSet: FirstSet) {
       def inner(statements: List[ExtendedStatement]): Unit = statements match {
         case Nil =>
         case (st: ExtendedNonTerminal) :: Nil =>
-            addToFollow(st, follow(producer).toSeq:_*)
+          addToFollow(st, follow(producer).toSeq:_*)
         case st :: tail =>
           if (!st.isInstanceOf[ExtendedNonTerminal]) inner(tail)
           else {

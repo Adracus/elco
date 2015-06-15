@@ -45,7 +45,8 @@ class ReduceTable(grammar: ExtendedGrammar, followSet: FollowSet) {
     tuples.foreach {
       case (itemSet, rule, follows) =>
         follows.foreach { terminal =>
-          table((itemSet, terminal)) = rule
+          if (rule.nonTerminal.name != "Start")
+            table((itemSet, terminal)) = rule
         }
     }
     table.toMap

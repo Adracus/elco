@@ -18,4 +18,6 @@ class TokenStream(val lexer: Lexer) {
   }
 
   def hasNext: Boolean = lexer.hasNext
+
+  def isEmpty = _current.isEmpty && !lexer.hasNext
 }

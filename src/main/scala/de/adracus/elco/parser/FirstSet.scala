@@ -3,60 +3,76 @@ package de.adracus.elco.parser
 import de.adracus.elco.grammar.core._
 
 import scala.collection.mutable
+
 /**
  * Created by axel on 11/06/15.
  */
 class FirstSet(grammar: ExtendedGrammar) {
-  private def firstStep(first: Map[ExtendedNonTerminal, Set[Terminal]], statements: List[ExtendedProducable]) = {
-    def inner(acc: Set[Terminal], statements: List[ExtendedStatement]): Set[Terminal] = statements match {
-      case Nil => acc + Epsilon
-      case st :: tail =>
-        if (st.isInstanceOf[ExtendedTerminal]) acc + st.base.asInstanceOf[Terminal]
-        else {
-          val nt = st.asInstanceOf[ExtendedNonTerminal]
-          if (first(nt) contains Epsilon) inner(acc ++ (first(nt) - Epsilon), tail)
-          else acc ++ first(nt)
-        }
+  private def computeFirst(grammar: ExtendedGrammar) = {
+    val table = new mutable.HashMap[ExtendedProducable, Set[Terminal]]()
+      .withDefaultValue(Set.empty)
+    var old: Map[ExtendedProducable, Set[Terminal]] = null
+    val groupedRules = grammar.rules.groupBy(_.nonTerminal)
+
+    def addToFirst(statement: ExtendedProducable, terminals: Statement*) = {
+      table(statement) = table(statement) ++ terminals.map(_.asInstanceOf[Terminal])
     }
 
-    inner(Set.empty, statements)
+    def firstStep(nonTerminal: ExtendedNonTerminal, production: ExtendedProduction) = {
+      def recurse(acc: Set[Terminal], statements: List[ExtendedProducable]): Unit = statements match {
+        case Nil =>
+          addToFirst(nonTerminal, (acc + Epsilon).toList:_*)
+
+        case st :: tail =>
+          val _first = table(st)
+          if (!(_first contains Epsilon))
+            addToFirst(nonTerminal, (acc ++ _first).toList:_*)
+          else {
+            recurse(acc ++ _first, tail)
+          }
+      }
+
+      recurse(Set.empty, production.statements)
+    }
+
+    do {
+      old = table.toMap
+
+      grammar.statements.foreach {
+        case t: ExtendedTerminal => table(t) = table(t) + t.base.asInstanceOf[Terminal]
+
+        case nt: ExtendedNonTerminal =>
+          groupedRules(nt) foreach {
+            case rule if rule.production.isEpsilonProduction =>
+              addToFirst(nt, Epsilon)
+
+            case rule =>
+              firstStep(nt, rule.production)
+          }
+      }
+    } while (old != table)
+
+    table.toMap
   }
 
-  private def computeFirst(grammar: ExtendedGrammar) = {
-    val first = new mutable.HashMap[ExtendedNonTerminal, Set[Terminal]]().withDefaultValue(Set.empty)
-    val rules = grammar.rules.groupBy(_.nonTerminal)
+  def firstStep(statements: List[ExtendedProducable]) = {
+    def recurse(acc: Set[Terminal], statements: List[ExtendedProducable]): Set[Terminal] = statements match {
+      case st :: tail =>
+        val _first = table(st)
+        if (_first.contains(Epsilon))
+          recurse(acc ++ _first, tail)
+        else
+          _first
 
-    def addToFirst(key: ExtendedNonTerminal, values: Terminal*) = {
-      first(key) = first(key) ++ values
+      case Nil => acc
     }
 
-    val nonTerminals = grammar.rules.map(_.nonTerminal)
-
-    for (nonTerminal <- nonTerminals;
-         rule <- rules(nonTerminal)) {
-      if (rule.production.isEpsilonProduction) {
-        addToFirst(nonTerminal, Epsilon)
-      }
-      if (rule.production.startsWithTerminal) {
-        addToFirst(nonTerminal, rule.head.base.asInstanceOf[Terminal])
-      }
-    }
-
-    var old: mutable.Map[ExtendedNonTerminal, Set[Terminal]] = null
-    do {
-      old = new mutable.HashMap[ExtendedNonTerminal, Set[Terminal]]() ++ first
-
-      for (ruleSet <- rules.values; rule <- ruleSet) {
-        val A = rule.nonTerminal
-        val production = rule.production
-
-        addToFirst(A, firstStep(first.toMap.withDefaultValue(Set.empty), production.toList).toSeq:_*)
-      }
-    } while (old != first)
-
-    first.toMap
+    recurse(Set.empty, statements)
   }
 
   val table = computeFirst(grammar)
+
+  def apply(extendedProducable: ExtendedProducable): Set[Terminal] = this.apply(List(extendedProducable))
+  def apply(iterable: Iterable[ExtendedProducable]): Set[Terminal] = firstStep(iterable.toList)
 }
 

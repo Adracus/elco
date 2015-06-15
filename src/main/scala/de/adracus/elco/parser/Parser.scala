@@ -24,7 +24,7 @@ class Parser(parseTable: ParseTable) {
 
   def parse(tokenStream: TokenStream) = {
     var finished = false
-    while (!finished && tokenStream.hasNext) {
+    while (!finished && !tokenStream.isEmpty) {
       finished = step(tokenStream)
     }
     if (finished)
