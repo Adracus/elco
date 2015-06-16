@@ -1,7 +1,8 @@
-package de.adracus.elco.parser
+package de.adracus.elco.parser.core
 
-import Function.tupled
 import de.adracus.elco.grammar.core._
+
+import scala.Function.tupled
 
 /**
  * Created by axel on 10/06/15.

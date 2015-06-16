@@ -1,4 +1,4 @@
-package de.adracus.elco.parser
+package de.adracus.elco.parser.core
 
 import scala.collection.mutable
 

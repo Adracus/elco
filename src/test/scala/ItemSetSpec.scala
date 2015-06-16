@@ -1,8 +1,7 @@
 import de.adracus.elco.grammar.core._
-import de.adracus.elco.lexer.core.{TokenStream, Lexer}
 import de.adracus.elco.lexer.production.ElcoLexer
-import de.adracus.elco.parser._
-import org.scalatest.{Matchers, FunSpec}
+import de.adracus.elco.parser.core.Parser
+import org.scalatest.{FunSpec, Matchers}
 
 /**
  * Created by axel on 09/06/15.

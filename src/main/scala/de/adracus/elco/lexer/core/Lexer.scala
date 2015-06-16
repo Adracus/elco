@@ -3,7 +3,6 @@ package de.adracus.elco.lexer.core
 import de.adracus.elco.lexer.consumer.{Consumer, RegexConsumer, RegexIgnorer}
 
 import scala.collection.mutable.ListBuffer
-import scala.util.matching.Regex
 
 abstract class Lexer {
   def newLineSymbol: String

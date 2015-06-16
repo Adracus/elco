@@ -1,6 +1,6 @@
-package de.adracus.elco.parser
+package de.adracus.elco.parser.core
 
-import de.adracus.elco.grammar.core.{Terminal, Rule, Grammar}
+import de.adracus.elco.grammar.core.{Grammar, Rule}
 
 /**
  * Created by axel on 15/06/15.

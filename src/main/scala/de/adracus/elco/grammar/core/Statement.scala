@@ -1,6 +1,6 @@
 package de.adracus.elco.grammar.core
 
-import de.adracus.elco.parser.ItemSet
+import de.adracus.elco.parser.core.ItemSet
 
 // Base classes
 

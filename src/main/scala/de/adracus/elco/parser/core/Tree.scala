@@ -1,4 +1,4 @@
-package de.adracus.elco.parser
+package de.adracus.elco.parser.core
 
 import de.adracus.elco.grammar.core.Rule
 import de.adracus.elco.lexer.core.Token

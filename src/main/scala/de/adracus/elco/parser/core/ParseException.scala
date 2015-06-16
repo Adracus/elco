@@ -1,6 +1,6 @@
-package de.adracus.elco.parser
+package de.adracus.elco.parser.core
 
-import de.adracus.elco.grammar.core.{Statement, Terminal}
+import de.adracus.elco.grammar.core.Statement
 import de.adracus.elco.lexer.core.Token
 
 /**

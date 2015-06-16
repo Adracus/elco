@@ -2,7 +2,7 @@ package de.adracus.elco.lexer.consumer
 
 import java.util.regex.Pattern
 
-import de.adracus.elco.lexer.core.{LexingText, Hit, Lexer, Match}
+import de.adracus.elco.lexer.core.{Hit, LexingText, Match}
 
 /**
  * Created by axel on 20/05/15.

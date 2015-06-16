@@ -1,6 +1,6 @@
-import de.adracus.elco.grammar.core.{Word, Production, NonTerminal, Rule}
-import de.adracus.elco.parser.Item
-import org.scalatest.{Matchers, FunSpec}
+import de.adracus.elco.grammar.core.{NonTerminal, Production, Rule, Word}
+import de.adracus.elco.parser.core.Item
+import org.scalatest.{FunSpec, Matchers}
 
 /**
  * Created by axel on 13/06/15.

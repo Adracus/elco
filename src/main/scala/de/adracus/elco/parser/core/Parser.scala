@@ -1,7 +1,7 @@
-package de.adracus.elco.parser
+package de.adracus.elco.parser.core
 
+import de.adracus.elco.grammar.core.{End, Grammar, Rule, Word}
 import de.adracus.elco.lexer.core.{Token, TokenStream}
-import de.adracus.elco.grammar.core.{Rule, Grammar, Word, End}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
