@@ -1,7 +1,5 @@
 package de.adracus.elco.grammar.core
 
-import de.adracus.elco.lexer.core.Token
-
 import scala.collection.mutable
 
 /**
@@ -24,13 +22,7 @@ class GrammarBuilder() {
 
   implicit def statementToProduction(producable: Producable): Production = Production(List(producable))
 
-  implicit def productionToList(production: Production): ProductionList = new ProductionList(production)
-
   implicit def symbolToProduction(symbol: Symbol): Production = Production(List(NonTerminal(symbol.name)))
-
-  implicit def symbolToProductionList(symbol: Symbol): ProductionList = new ProductionList(symbolToProduction(symbol))
-
-  implicit def stringToProductionList(string: String): ProductionList = new ProductionList(stringToProduction(string))
 
   class RuleBuilder(val grammar: GrammarBuilder, val name: String) {
     def build(productions: ProductionList) = {
@@ -39,7 +31,8 @@ class GrammarBuilder() {
       nonTerminal
     }
 
-    def := (productions: ProductionList) = build(productions)
+    def := (productions: ProductionList): Unit = build(productions)
+    def := (production: Production): Unit = build(new ProductionList(production))
   }
 
   def build() = {
