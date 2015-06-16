@@ -70,7 +70,6 @@ class Parser(parseTable: ParseTable) {
           false
 
         case Reduce(rule) =>
-          println(rule.nonTerminal.name)
           reduce(rule)
 
           val next = parseTable.goto(state, rule.nonTerminal)
