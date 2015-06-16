@@ -3,21 +3,56 @@ package de.adracus.elco.lexer.core
 /**
  * Created by axel on 30/05/15.
  */
-class TokenStream(val lexer: Lexer) {
-  private var _current: Seq[Token] = Seq.empty
+class TokenStream(val string: String, lexer: Lexer) extends Iterator[Token] {
+  private val text = new LexingText(string, lexer.newLineSymbol)
 
-  def consume() = _current = _current.drop(1)
+  private var finished = false
+
+  private var _current: Seq[Token] = Seq.empty
 
   def lookahead: Token = lookahead()
 
   def lookahead(n: Int = 0): Token = {
     while (_current.length < n + 1) {
-      _current = _current :+ lexer.next()
+      _current = _current :+ next()
     }
     _current(n)
   }
 
-  def hasNext: Boolean = lexer.hasNext
+  final def next(): Token = {
+    if (_current.nonEmpty) {
+      val result = _current.head
+      _current = _current.drop(1)
+      return result
+    }
 
-  def isEmpty = _current.isEmpty && !lexer.hasNext
+    if (finished) throw new IllegalStateException("Already at end of text")
+
+    if (!text.hasNext) {
+      finished = true
+      return Token("EOF", text.position)
+    }
+
+    val matches = lexer.tryMatch(text)
+    if (matches.isEmpty)
+      throw new UnrecognizedSymbol(text.current, text.position)
+
+    val longestMatch = matches.maxBy(_.length)
+    longestMatch match {
+      case Hit(name, length, value) =>
+        val start = position
+        text.step(length)
+        new Token(name, start, value)
+
+      case Empty(length) =>
+        text.step(length)
+        next()
+    }
+  }
+
+  def position = text.position
+
+  def hasNext = !finished
+
+  override def isEmpty = _current.isEmpty && !hasNext
 }

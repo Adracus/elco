@@ -9,11 +9,16 @@ class LexerSpec extends FunSpec with Matchers {
   describe("Lexer") {
     describe("next") {
       it("should return the matched tokens") {
-        val lexer = new Lexer("123 0 0 9")
-        lexer addConsumer new RegexConsumer("[0-9]+", "INTEGER", Some(_.toInt))
-        lexer addConsumer new RegexIgnorer(" ")
+        object TestLexer extends Lexer {
+          def newLineSymbol = "\n"
 
-        val tokens = lexer.toSeq
+          this addConsumer new RegexConsumer("[0-9]+", "INTEGER", Some(_.toInt))
+          this addConsumer new RegexIgnorer(" ")
+        }
+
+        val stream = TestLexer.lex("123 0 0 9")
+
+        val tokens = stream.toSeq
         val expected = Seq (
           Token("INTEGER", Position(0, 0), Some(123)),
           Token("INTEGER", Position(4, 0), Some(0)),
@@ -25,12 +30,16 @@ class LexerSpec extends FunSpec with Matchers {
       }
 
       it("should throw an error on unrecognized tokens") {
-        val lexer = new Lexer("abc")
-        lexer addConsumer new RegexConsumer("[0-9]+", "INTEGER", Some(_.toInt))
-        lexer addConsumer new RegexIgnorer(" ")
+        object TestLexer extends Lexer {
+          def newLineSymbol = "\n"
 
+          this addConsumer new RegexConsumer("[0-9]+", "INTEGER", Some(_.toInt))
+          this addConsumer new RegexIgnorer(" ")
+        }
+
+        val stream = TestLexer.lex("abc")
         val symbolError = intercept[UnrecognizedSymbol] {
-          lexer next()
+          stream next()
         }
 
         assert(symbolError.position == Position(0, 0))

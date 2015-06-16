@@ -1,25 +1,27 @@
 package de.adracus.elco.parser
 
 import de.adracus.elco.lexer.core.{Token, TokenStream}
-import de.adracus.elco.grammar.core.{Grammar, Word, End}
+import de.adracus.elco.grammar.core.{Rule, Grammar, Word, End}
 
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 /**
  * Created by axel on 15/06/15.
  */
 class Parser(parseTable: ParseTable) {
   private val stack = new mutable.Stack[Int]()
+  private val treeStack = new mutable.Stack[Tree]()
   stack.push(0)
 
   def state = stack.top
 
   def action(token: Token) = {
-    if (token.name == "EOF") parseTable.action(state, End)
-    else {
-      val terminal = Word(token.name)
-      parseTable.action(state, terminal)
-    }
+    parseTable.action(state, wrap(token))
+  }
+
+  def wrap(token: Token) = {
+    if (token.name == "EOF") End else Word(token.name)
   }
 
   def parse(tokenStream: TokenStream) = {
@@ -27,10 +29,24 @@ class Parser(parseTable: ParseTable) {
     while (!finished && !tokenStream.isEmpty) {
       finished = step(tokenStream)
     }
-    if (finished)
-      println("Accepted")
-    else
-      println("Unexpected end of stream")
+    stack.clear()
+    stack.push(0)
+    if (finished) {
+      treeStack.pop()
+    } else {
+      treeStack.clear()
+      throw new Exception("Parse error")
+    }
+  }
+
+  private def reduce(rule: Rule) = {
+    val buffer = new ListBuffer[Tree]()
+    for (_ <- 0 until rule.length) {
+      stack.pop()
+      buffer.append(treeStack.pop())
+    }
+
+    treeStack.push(Node(rule, buffer.reverse.toSeq))
   }
 
   def step(tokenStream: TokenStream) = {
@@ -38,13 +54,13 @@ class Parser(parseTable: ParseTable) {
     todo match {
       case Shift(next) =>
         stack.push(next)
-        tokenStream.consume()
+        val leaf = Leaf(tokenStream.next())
+        treeStack.push(leaf)
         false
 
       case Reduce(rule) =>
         println(rule.nonTerminal.name)
-        for (_ <- 0 until rule.length)
-          stack.pop()
+        reduce(rule)
 
         val next = parseTable.goto(state, rule.nonTerminal)
         stack.push(next)
@@ -52,7 +68,6 @@ class Parser(parseTable: ParseTable) {
 
       case Accept =>
         true
-
     }
   }
 }

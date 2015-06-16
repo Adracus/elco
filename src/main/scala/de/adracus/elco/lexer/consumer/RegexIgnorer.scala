@@ -1,6 +1,6 @@
 package de.adracus.elco.lexer.consumer
 
-import de.adracus.elco.lexer.core.{Empty, Lexer, Match}
+import de.adracus.elco.lexer.core.{LexingText, Empty, Lexer, Match}
 
 /**
  * Created by axel on 20/05/15.
@@ -8,8 +8,8 @@ import de.adracus.elco.lexer.core.{Empty, Lexer, Match}
 class RegexIgnorer(regex: String) extends Consumer {
   val r = regex.r
 
-  def tryMatch(lexer: Lexer): Option[Match] = {
-    val matchTry = lexer startMatch r
+  def tryMatch(text: LexingText): Option[Match] = {
+    val matchTry = text startMatch r
     if (matchTry.isDefined) {
       Some(Empty(matchTry.get.length))
     } else {

@@ -1,4 +1,4 @@
-import de.adracus.elco.lexer.core.{Hit, Lexer, Position, Unclosed}
+import de.adracus.elco.lexer.core._
 import de.adracus.elco.lexer.production.StringConsumer
 import org.scalatest.{FunSpec, Matchers}
 
@@ -10,9 +10,9 @@ class StringConsumerSpec extends FunSpec with Matchers {
     describe("tryMatch") {
       it("should match the string") {
         val consumer = new StringConsumer("\"", "\\", "\n")
-        val lexer = new Lexer("\"Some test\"")
+        val text = new LexingText("\"Some test\"")
 
-        val test = consumer.tryMatch(lexer)
+        val test = consumer.tryMatch(text)
         assert(test.isDefined)
         val matched = test.get
         assert(matched.isInstanceOf[Hit])
@@ -22,9 +22,9 @@ class StringConsumerSpec extends FunSpec with Matchers {
 
       it("should match the string and remove escape characters") {
         val consumer = new StringConsumer("\"", "\\", "\n")
-        val lexer = new Lexer("\"Some \\\"test\\\"\"")
+        val text = new LexingText("\"Some \\\"test\\\"\"")
 
-        val test = consumer.tryMatch(lexer)
+        val test = consumer.tryMatch(text)
         assert(test.isDefined)
         val matched = test.get
         assert(matched.isInstanceOf[Hit])
@@ -34,10 +34,10 @@ class StringConsumerSpec extends FunSpec with Matchers {
 
       it("should fail if the string is divided by newlines") {
         val consumer = new StringConsumer("\"", "\\", "\n")
-        val lexer = new Lexer("\"Some \\\"test\\\"\n\"")
+        val text = new LexingText("\"Some \\\"test\\\"\n\"")
 
         val exception = intercept[Unclosed] {
-          consumer.tryMatch(lexer)
+          consumer.tryMatch(text)
         }
 
         assert(exception == Unclosed("String", Position(0, 0)))
@@ -45,10 +45,10 @@ class StringConsumerSpec extends FunSpec with Matchers {
 
       it("should fail if the string is not closed") {
         val consumer = new StringConsumer("\"", "\\", "\n")
-        val lexer = new Lexer("\"Some \\\"test\\\"")
+        val text = new LexingText("\"Some \\\"test\\\"")
 
         val exception = intercept[Unclosed] {
-          consumer.tryMatch(lexer)
+          consumer.tryMatch(text)
         }
 
         assert(exception == Unclosed("String", Position(0, 0)))

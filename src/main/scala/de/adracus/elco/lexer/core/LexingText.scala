@@ -5,7 +5,7 @@ import scala.util.matching.Regex
 /**
  * Created by axel on 20/05/15.
  */
-class LexingText(val text: String, val newlineSymbol: String) {
+class LexingText(val text: String, val newlineSymbol: String = "\n") {
   private val counter = new PositionCounter(newlineSymbol)
 
   def pointsAt(string: String): Boolean = remaining.startsWith(string)

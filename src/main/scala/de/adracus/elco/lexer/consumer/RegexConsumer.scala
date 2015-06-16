@@ -2,7 +2,7 @@ package de.adracus.elco.lexer.consumer
 
 import java.util.regex.Pattern
 
-import de.adracus.elco.lexer.core.{Hit, Lexer, Match}
+import de.adracus.elco.lexer.core.{LexingText, Hit, Lexer, Match}
 
 /**
  * Created by axel on 20/05/15.
@@ -10,8 +10,8 @@ import de.adracus.elco.lexer.core.{Hit, Lexer, Match}
 class RegexConsumer(regex: String, val name: String, val transform: Option[String => Any] = None) extends Consumer {
   val r = regex.r
 
-  def tryMatch(lexer: Lexer): Option[Match] = {
-    val possibleMatch = lexer startMatch r
+  def tryMatch(text: LexingText): Option[Match] = {
+    val possibleMatch = text startMatch r
     if (possibleMatch.isDefined) {
       val matched = possibleMatch.get
       if (transform.isDefined) {

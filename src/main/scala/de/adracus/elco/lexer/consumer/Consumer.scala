@@ -1,10 +1,10 @@
 package de.adracus.elco.lexer.consumer
 
-import de.adracus.elco.lexer.core.{Lexer, Match}
+import de.adracus.elco.lexer.core.{LexingText, Match}
 
 /**
  * Created by axel on 20/05/15.
  */
 trait Consumer {
-  def tryMatch(lexer: Lexer): Option[Match]
+  def tryMatch(lexingText: LexingText): Option[Match]
 }

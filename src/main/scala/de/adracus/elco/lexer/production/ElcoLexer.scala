@@ -6,7 +6,9 @@ import de.adracus.elco.lexer.core.Lexer
 /**
  * Created by axel on 21/05/15.
  */
-class ElcoLexer(text: String) extends Lexer(text) {
+class ElcoLexer extends Lexer {
+  def newLineSymbol = "\n"
+
   keyword("if")
   keyword("when")
   keyword("else")
@@ -22,5 +24,5 @@ class ElcoLexer(text: String) extends Lexer(text) {
   addConsumer(new RegexConsumer("\\d+", "INTEGER", Some(_.toInt)))
   addConsumer(new RegexConsumer("\\d+\\.\\d+", "DOUBLE", Some(_.toDouble)))
   addConsumer(new RegexConsumer("\\w+", "IDENTIFIER", Some(_.toString)))
-  addConsumer(new StringConsumer("\"", "\\", "\n"))
+  addConsumer(new StringConsumer("\"", "\\", newLineSymbol))
 }
