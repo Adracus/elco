@@ -1,6 +1,6 @@
 package de.adracus.elco.parser
 
-import de.adracus.elco.grammar.core.{Rule, Grammar}
+import de.adracus.elco.grammar.core.{Terminal, Rule, Grammar}
 
 /**
  * Created by axel on 15/06/15.
@@ -16,6 +16,12 @@ class ParseTable(
 
   val action = new ActionTable(transitionTable, itemSets, startingRule, enumerator, reduceTable)
   val goto = new GotoTable(transitionTable, enumerator)
+
+  def expected(state: Int) = {
+    action.table.collect {
+      case ((otherState, statement), _) if otherState == state => statement
+    }.toSet
+  }
 }
 
 object ParseTable {

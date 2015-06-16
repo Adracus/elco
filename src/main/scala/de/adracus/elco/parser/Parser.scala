@@ -32,10 +32,14 @@ class Parser(parseTable: ParseTable) {
     stack.clear()
     stack.push(0)
     if (finished) {
-      treeStack.pop()
+      val result = treeStack.pop()
+      reset()
+      result
     } else {
-      treeStack.clear()
-      throw new Exception("Parse error")
+      reset()
+      throw UnexpectedException(
+        tokenStream.lookahead,
+        parseTable.expected(state))
     }
   }
 
@@ -49,25 +53,40 @@ class Parser(parseTable: ParseTable) {
     treeStack.push(Node(rule, buffer.reverse.toSeq))
   }
 
+  def reset() = {
+    treeStack.clear()
+    stack.clear()
+    stack.push(0)
+  }
+
   def step(tokenStream: TokenStream) = {
-    val todo = action(tokenStream.lookahead)
-    todo match {
-      case Shift(next) =>
-        stack.push(next)
-        val leaf = Leaf(tokenStream.next())
-        treeStack.push(leaf)
-        false
+    try {
+      val todo = action(tokenStream.lookahead)
+      todo match {
+        case Shift(next) =>
+          stack.push(next)
+          val leaf = Leaf(tokenStream.next())
+          treeStack.push(leaf)
+          false
 
-      case Reduce(rule) =>
-        println(rule.nonTerminal.name)
-        reduce(rule)
+        case Reduce(rule) =>
+          println(rule.nonTerminal.name)
+          reduce(rule)
 
-        val next = parseTable.goto(state, rule.nonTerminal)
-        stack.push(next)
-        false
+          val next = parseTable.goto(state, rule.nonTerminal)
+          stack.push(next)
+          false
 
-      case Accept =>
-        true
+        case Accept =>
+          true
+      }
+    } catch {
+      case n: NoSuchElementException => {
+        reset()
+        throw UnexpectedException(
+          tokenStream.lookahead,
+          parseTable.expected(state))
+      }
     }
   }
 }
