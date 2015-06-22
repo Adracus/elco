@@ -3,7 +3,7 @@ package de.adracus.elco.grammar.core
 /**
  * Created by axel on 26/05/15.
  */
-case class Production(statements: List[Producable]) {
+case class Production(statements: List[Producable], evaluation: Option[Seq[Any] => Any] = None) {
   require(!statements.isEmpty, message = "At least one production has to be present")
   require(statements.filter(_ == Epsilon).lengthCompare(2) < 0, message = "Epsilon can only be present once")
 
@@ -22,6 +22,8 @@ case class Production(statements: List[Producable]) {
   def or(producable: Producable) = new ProductionList(this, Production(List(producable)))
   def |(production: Production) = or(production)
   def |(producable: Producable) = or(producable)
+
+  def evaluate(evaluation: Seq[Any] => Any) = Production(statements, Some(evaluation))
 
   override def toString() = statements mkString " & "
 

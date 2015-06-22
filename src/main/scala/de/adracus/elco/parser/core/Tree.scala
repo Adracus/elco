@@ -8,14 +8,25 @@ import de.adracus.elco.lexer.core.Token
  */
 sealed trait Tree {
   def name: String
+
+  def evaluate(): Any
 }
 
 case class Leaf(token: Token) extends Tree {
   def name = token.name
+
+  def evaluate() = {
+    if (token.hasValue) token.value.get else Unit
+  }
 }
 
 case class Node(rule: Rule, children: Seq[Tree]) extends Tree {
   def name = rule.nonTerminal.name
+
+  def evaluate() = {
+    val subEvaluation = children.map(_.evaluate())
+    if (rule.evaluation.isDefined) rule.evaluation.get(subEvaluation) else Unit
+  }
 }
 
 

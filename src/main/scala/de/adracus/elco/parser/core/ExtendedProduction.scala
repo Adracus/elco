@@ -5,7 +5,7 @@ import de.adracus.elco.grammar.core._
 /**
  * Created by axel on 11/06/15.
  */
-case class ExtendedProduction(statements: List[ExtendedProducable]) extends Iterable[ExtendedProducable] {
+case class ExtendedProduction(statements: List[ExtendedProducable], evaluation: Option[Seq[Any] => Any]) extends Iterable[ExtendedProducable] {
   require(
     statements.nonEmpty,
     "A production cannot be empty")

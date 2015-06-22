@@ -21,5 +21,5 @@ class ElcoTransformer {
 object ElcoTransformer extends App {
   val transformer = new ElcoTransformer()
 
-  transformer.transform("5 mod 6")
+  val tree = transformer.transform("5 mod 6")
 }

@@ -34,7 +34,7 @@ class Parser(parseTable: ParseTable) {
     if (finished) {
       val result = treeStack.pop()
       reset()
-      result
+      result.asInstanceOf[Node]
     } else {
       reset()
       throw UnexpectedException(

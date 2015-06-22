@@ -10,4 +10,6 @@ case class Rule(nonTerminal: NonTerminal, production: Production) extends Iterab
   def iterator: Iterator[Producable] = production.iterator
 
   def length = production.length
+
+  def evaluation = production.evaluation
 }
