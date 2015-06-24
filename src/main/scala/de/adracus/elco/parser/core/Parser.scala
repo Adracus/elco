@@ -82,9 +82,11 @@ class Parser(parseTable: ParseTable) {
       val reducePrecedence = parseTable.precedenceOf(reduceSymbol)
       val shiftPrecedence = parseTable.precedenceOf(lookahead)
 
-      if (shiftPrecedence.isEmpty)
+      if (shiftPrecedence.isEmpty && reducePrecedence.isEmpty)
+        proceed(Shift(state))
+      else if (shiftPrecedence.isEmpty && reducePrecedence.isDefined)
         proceed(Reduce(rule))
-      else if (reducePrecedence.isEmpty)
+      else if (reducePrecedence.isEmpty && shiftPrecedence.isDefined)
         proceed(Shift(state))
       else if (reducePrecedence.get > shiftPrecedence.get)
         execute(tokenStream, Reduce(rule))
