@@ -4,7 +4,7 @@ package de.adracus.elco.grammar.core
  * Created by axel on 26/05/15.
  */
 case class Production(statements: List[Producable], evaluation: Option[Seq[Any] => Any] = None) {
-  require(!statements.isEmpty, message = "At least one production has to be present")
+  require(statements.nonEmpty, message = "At least one production has to be present")
   require(statements.filter(_ == Epsilon).lengthCompare(2) < 0, message = "Epsilon can only be present once")
 
   def apply(n: Int) = statements(n)
@@ -25,7 +25,7 @@ case class Production(statements: List[Producable], evaluation: Option[Seq[Any] 
 
   def evaluate(evaluation: Seq[Any] => Any) = Production(statements, Some(evaluation))
 
-  override def toString() = statements mkString " & "
+  override def toString = statements mkString " & "
 
   def iterator: Iterator[Producable] = statements.iterator
 

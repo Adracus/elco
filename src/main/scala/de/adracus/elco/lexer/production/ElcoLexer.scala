@@ -19,6 +19,7 @@ class ElcoLexer extends Lexer {
   symbol("+")
   symbol("-")
   symbol("*")
+  symbol("^")
   symbol("/")
   symbol("(")
   symbol(")")

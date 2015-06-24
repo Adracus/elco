@@ -1,6 +1,6 @@
 package de.adracus.elco.parser.core
 
-import de.adracus.elco.grammar.core.{End, Grammar, Rule, Word}
+import de.adracus.elco.grammar.core._
 import de.adracus.elco.lexer.core.{Token, TokenStream}
 
 import scala.collection.mutable
@@ -76,6 +76,10 @@ class Parser(parseTable: ParseTable) {
     case ShiftReduce(Shift(state), Reduce(rule)) =>
       val proceed = execute(tokenStream, _: Action)
 
+      def correctAction(precedence: Precedence) = {
+        if (precedence.pType == Left) Reduce(rule) else Shift(state)
+      }
+
       val lookahead = tokenStream.lookahead.name
       val reduceSymbol = rule.toSeq(1).name
 
@@ -85,12 +89,12 @@ class Parser(parseTable: ParseTable) {
       if (shiftPrecedence.isEmpty && reducePrecedence.isEmpty)
         proceed(Shift(state))
       else if (shiftPrecedence.isEmpty && reducePrecedence.isDefined)
-        proceed(Reduce(rule))
+        proceed(correctAction(reducePrecedence.get))
       else if (reducePrecedence.isEmpty && shiftPrecedence.isDefined)
-        proceed(Shift(state))
+        proceed(correctAction(shiftPrecedence.get))
       else if (reducePrecedence.get > shiftPrecedence.get)
-        execute(tokenStream, Reduce(rule))
-      else execute(tokenStream, Shift(state))
+        proceed(correctAction(reducePrecedence.get))
+      else proceed(correctAction(shiftPrecedence.get))
 
     case Accept =>
       true

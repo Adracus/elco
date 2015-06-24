@@ -37,7 +37,7 @@ case class ExtendedProduction(statements: List[ExtendedProducable], evaluation: 
 
   override def toString() = statements.mkString(" ")
 
-  def production = Production(statements.map(_.base).asInstanceOf[List[Producable]])
+  def production = Production(statements.map(_.base).asInstanceOf[List[Producable]], evaluation)
 
   def lastSet = statements.last.end
 }

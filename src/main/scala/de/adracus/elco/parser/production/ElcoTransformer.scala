@@ -15,11 +15,13 @@ class ElcoTransformer {
     val stream = lexer.lex(code)
     val tree = parser.parse(stream)
     println(tree.toFormatted())
+    tree
   }
 }
 
 object ElcoTransformer extends App {
   val transformer = new ElcoTransformer()
 
-  val tree = transformer.transform("5 + 6 - 4 / 3 * 5 + 7")
+  val tree = transformer.transform("6 + 3 + 2")
+  println(tree.evaluate())
 }
