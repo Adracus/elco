@@ -59,26 +59,45 @@ class Parser(parseTable: ParseTable) {
     stack.push(0)
   }
 
+  def execute(tokenStream: TokenStream, action: Action): Boolean = action match {
+    case Shift(next) =>
+      stack.push(next)
+      val leaf = Leaf(tokenStream.next())
+      treeStack.push(leaf)
+      false
+
+    case Reduce(rule) =>
+      reduce(rule)
+
+      val next = parseTable.goto(state, rule.nonTerminal)
+      stack.push(next)
+      false
+
+    case ShiftReduce(Shift(state), Reduce(rule)) =>
+      val proceed = execute(tokenStream, _: Action)
+
+      val lookahead = tokenStream.lookahead.name
+      val reduceSymbol = rule.toSeq(1).name
+
+      val reducePrecedence = parseTable.precedenceOf(reduceSymbol)
+      val shiftPrecedence = parseTable.precedenceOf(lookahead)
+
+      if (shiftPrecedence.isEmpty)
+        proceed(Reduce(rule))
+      else if (reducePrecedence.isEmpty)
+        proceed(Shift(state))
+      else if (reducePrecedence.get > shiftPrecedence.get)
+        execute(tokenStream, Reduce(rule))
+      else execute(tokenStream, Shift(state))
+
+    case Accept =>
+      true
+  }
+
   def step(tokenStream: TokenStream) = {
     try {
       val todo = action(tokenStream.lookahead)
-      todo match {
-        case Shift(next) =>
-          stack.push(next)
-          val leaf = Leaf(tokenStream.next())
-          treeStack.push(leaf)
-          false
-
-        case Reduce(rule) =>
-          reduce(rule)
-
-          val next = parseTable.goto(state, rule.nonTerminal)
-          stack.push(next)
-          false
-
-        case Accept =>
-          true
-      }
+      execute(tokenStream, todo)
     } catch {
       case n: NoSuchElementException => {
         reset()

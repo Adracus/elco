@@ -33,7 +33,16 @@ class ActionTable(
     reduceTable.table.foreach {
       case ((state, terminal), rule) =>
         val startNo = enumerator(state)
-        table((startNo, terminal)) = Reduce(rule)
+        val entry = table.get((startNo, terminal))
+        if (entry.isDefined) {
+          val action = entry.get
+          action match {
+            case s: Shift =>
+              table((startNo, terminal)) = ShiftReduce(s, Reduce(rule))
+          }
+        }
+        else
+          table((startNo, terminal)) = Reduce(rule)
     }
 
     table.toMap

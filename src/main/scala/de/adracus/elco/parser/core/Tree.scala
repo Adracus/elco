@@ -10,6 +10,8 @@ sealed trait Tree {
   def name: String
 
   def evaluate(): Any
+
+  def toFormatted(indent: Int = 0): String
 }
 
 case class Leaf(token: Token) extends Tree {
@@ -18,6 +20,8 @@ case class Leaf(token: Token) extends Tree {
   def evaluate() = {
     if (token.hasValue) token.value.get else Unit
   }
+
+  def toFormatted(indent: Int = 0) = " " * indent + name
 }
 
 case class Node(rule: Rule, children: Seq[Tree]) extends Tree {
@@ -26,6 +30,10 @@ case class Node(rule: Rule, children: Seq[Tree]) extends Tree {
   def evaluate() = {
     val subEvaluation = children.map(_.evaluate())
     if (rule.evaluation.isDefined) rule.evaluation.get(subEvaluation) else Unit
+  }
+
+  def toFormatted(indent: Int = 0) = {
+    (" " * indent + name) +: children.map(_.toFormatted(indent + 2)) mkString "\n"
   }
 }
 

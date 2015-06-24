@@ -1,16 +1,16 @@
 package de.adracus.elco.parser.core
 
-import de.adracus.elco.grammar.core.{Grammar, Rule}
+import de.adracus.elco.grammar.core.{Precedence, Grammar, Rule}
 
 /**
  * Created by axel on 15/06/15.
  */
 class ParseTable(
-                itemSets: List[ItemSet],
-                startingRule: Rule,
-                transitionTable: TransitionTable,
-                reduceTable: ReduceTable
-                  ) {
+    itemSets: List[ItemSet],
+    startingRule: Rule,
+    transitionTable: TransitionTable,
+    reduceTable: ReduceTable,
+    val precedendes: Set[Precedence]) {
   val enumerator = new Enumerator[ItemSet]
   itemSets.foreach(enumerator(_)) // Enumerate the item sets in correct order
 
@@ -22,6 +22,8 @@ class ParseTable(
       case ((otherState, statement), _) if otherState == state => statement
     }.toSet
   }
+
+  def precedenceOf(string: String) = precedendes.find(_.string == string)
 }
 
 object ParseTable {
@@ -33,6 +35,6 @@ object ParseTable {
     val follow = new FollowSet(eGrammar, first)
     val reduced = new ReduceTable(eGrammar, follow)
 
-    new ParseTable(sets, grammar.startRule, transitionTable, reduced)
+    new ParseTable(sets, grammar.startRule, transitionTable, reduced, grammar.precedences)
   }
 }

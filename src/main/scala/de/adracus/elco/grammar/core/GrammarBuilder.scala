@@ -8,6 +8,8 @@ import scala.collection.mutable
 class GrammarBuilder() {
   val rules = new mutable.LinkedHashSet[Rule]()
   private var startSymbol: Option[NonTerminal] = None
+  private var precedences = new mutable.HashSet[Precedence]()
+  private var count = 0
 
   def add(rule: Rule): Unit = {
     val nonTerminal = rule.nonTerminal
@@ -37,8 +39,20 @@ class GrammarBuilder() {
 
   def build() = {
     if (startSymbol.isEmpty) throw new IllegalStateException("Start symbol has to be defined")
-    new Grammar(startSymbol.get, Set() ++ rules)
+    new Grammar(startSymbol.get, Set() ++ rules, precedences.toSet)
   }
+
+  def precedence(pType: PrecedenceType, string: String) = {
+    val prec = new Precedence(pType, string, count)
+    if (!precedences.contains(prec)) {
+      precedences.add(prec)
+      count += 1
+    }
+  }
+
+  def left(string: String) = precedence(Left, string)
+  def right(string: String) = precedence(Right, string)
+  def unary(string: String) = precedence(Unary, string)
 
   override def toString = rules.mkString("\n")
 }

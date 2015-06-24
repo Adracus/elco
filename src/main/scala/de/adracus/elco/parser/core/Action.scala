@@ -9,6 +9,8 @@ sealed trait Action
 
 object Accept extends Action
 
+sealed case class ShiftReduce(shift: Shift, reduce: Reduce) extends Action
+
 sealed case class Reduce(rule: Rule) extends Action
 
 sealed trait Transition extends Action {

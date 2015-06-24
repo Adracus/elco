@@ -16,6 +16,10 @@ class ElcoLexer extends Lexer {
   keyword("else")
   keyword("while")
 
+  symbol("+")
+  symbol("-")
+  symbol("*")
+  symbol("/")
   symbol("(")
   symbol(")")
   symbol("{")
