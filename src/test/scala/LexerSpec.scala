@@ -10,8 +10,6 @@ class LexerSpec extends FunSpec with Matchers {
     describe("next") {
       it("should return the matched tokens") {
         object TestLexer extends Lexer {
-          def newLineSymbol = "\n"
-
           this addConsumer new RegexConsumer("[0-9]+", "INTEGER", Some(_.toInt))
           this addConsumer new RegexIgnorer(" ")
         }
@@ -31,8 +29,6 @@ class LexerSpec extends FunSpec with Matchers {
 
       it("should throw an error on unrecognized tokens") {
         object TestLexer extends Lexer {
-          def newLineSymbol = "\n"
-
           this addConsumer new RegexConsumer("[0-9]+", "INTEGER", Some(_.toInt))
           this addConsumer new RegexIgnorer(" ")
         }

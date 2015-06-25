@@ -5,7 +5,7 @@ import de.adracus.elco.lexer.consumer.{Consumer, RegexConsumer, RegexIgnorer}
 import scala.collection.mutable.ListBuffer
 
 abstract class Lexer {
-  def newLineSymbol: String
+  def newLineSymbol: String = "\n"
 
   private val consumers = new ListBuffer[Consumer]
 

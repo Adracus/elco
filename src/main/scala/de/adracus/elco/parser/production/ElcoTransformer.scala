@@ -14,7 +14,7 @@ class ElcoTransformer {
   def transform(code: String) = {
     val stream = lexer.lex(code)
     val tree = parser.parse(stream)
-    println(tree.toFormatted())
+    println(tree.toFormatted)
     tree
   }
 }
@@ -22,6 +22,6 @@ class ElcoTransformer {
 object ElcoTransformer extends App {
   val transformer = new ElcoTransformer()
 
-  val tree = transformer.transform("6 + 3 + 2")
+  val tree = transformer.transform("3 + 6 + 3 + 7")
   println(tree.evaluate())
 }
