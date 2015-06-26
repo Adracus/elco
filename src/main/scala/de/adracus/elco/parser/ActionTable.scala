@@ -39,6 +39,7 @@ class ActionTable(
           action match {
             case s: Shift =>
               table((startNo, terminal)) = ShiftReduce(s, Reduce(rule))
+            case o => throw new MatchError(o)
           }
         }
         else

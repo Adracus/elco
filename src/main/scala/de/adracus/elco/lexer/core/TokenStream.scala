@@ -1,5 +1,7 @@
 package de.adracus.elco.lexer.core
 
+import scala.collection.mutable.ListBuffer
+
 /**
  * Created by axel on 30/05/15.
  */
@@ -8,13 +10,13 @@ class TokenStream(val string: String, lexer: Lexer) extends Iterator[Token] {
 
   private var finished = false
 
-  private var _current: Seq[Token] = Seq.empty
+  private val _current: ListBuffer[Token] = new ListBuffer[Token]
 
   def lookahead: Token = lookahead()
 
   def lookahead(n: Int = 0): Token = {
     while (_current.length < n + 1) {
-      _current = _current :+ next()
+      _current += next()
     }
     _current(n)
   }
@@ -22,7 +24,7 @@ class TokenStream(val string: String, lexer: Lexer) extends Iterator[Token] {
   final def next(): Token = {
     if (_current.nonEmpty) {
       val result = _current.head
-      _current = _current.drop(1)
+      _current.trimStart(1)
       return result
     }
 

@@ -6,6 +6,7 @@ package de.adracus.elco.lexer.core
 class PositionCounter(val newlineSymbol: String) {
   private var column = 0
   private var line = 0
+  private var ct = 0
 
   def current = Position(column, line)
 
@@ -20,8 +21,9 @@ class PositionCounter(val newlineSymbol: String) {
         column += 1
       }
       i += 1
+      ct += 1
     }
   }
 
-  def value = column + line * newlineSymbol.length
+  def value = ct
 }

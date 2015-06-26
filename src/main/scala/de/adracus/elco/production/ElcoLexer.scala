@@ -6,8 +6,8 @@ import de.adracus.elco.lexer.core.Lexer
 /**
  * Created by axel on 21/05/15.
  */
-class ElcoLexer extends Lexer {
-  val identifier = "[a-zA-Z$_&|*/%][a-zA-Z0-9$_&|*/%+-]*"
+object ElcoLexer extends Lexer {
+  val identifier = "[a-zA-Z$_][a-zA-Z0-9$_&|*/%+-]*"
 
   keyword("if")
   keyword("when")
@@ -28,7 +28,7 @@ class ElcoLexer extends Lexer {
 
   ignore("\\h")
 
-  addConsumer(new RegexConsumer("\\n", "NEWLINE"))
+  addConsumer(new RegexConsumer("\n", "NEWLINE"))
   addConsumer(new RegexConsumer("\\d+", "INTEGER", Some(_.toInt)))
   addConsumer(new RegexConsumer("\\d+\\.\\d+", "DOUBLE", Some(_.toDouble)))
   addConsumer(new RegexConsumer(identifier, "IDENTIFIER", Some(_.toString)))

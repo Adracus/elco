@@ -40,8 +40,7 @@ class ItemSetSpec extends FunSpec with Matchers {
     describe("all") {
       it("should compute all item sets for the given grammar") {
         val parser = Parser parsing grammar
-        val lexer = new ElcoLexer
-        val stream = lexer.lex("1 + 2")
+        val stream = ElcoLexer.lex("1 + 2")
 
         val tree = parser.parse(stream)
         println(tree)
