@@ -5,10 +5,10 @@ import scala.collection.mutable
 /**
  * Created by axel on 26/05/15.
  */
-class GrammarBuilder() {
+class GrammarBuilder extends ProductionDSL {
   val rules = new mutable.LinkedHashSet[Rule]()
   private var startSymbol: Option[NonTerminal] = None
-  private var precedences = new mutable.HashSet[Precedence]()
+  private val precedences = new mutable.HashSet[Precedence]()
   private var count = 0
 
   def add(rule: Rule): Unit = {
@@ -19,12 +19,6 @@ class GrammarBuilder() {
   }
 
   implicit def symbolToBuilder(symbol: Symbol): RuleBuilder = new RuleBuilder(this, symbol.name)
-
-  implicit def stringToProduction(string: String): Production = Production.terminal(string)
-
-  implicit def statementToProduction(producable: Producable): Production = Production(List(producable))
-
-  implicit def symbolToProduction(symbol: Symbol): Production = Production(List(NonTerminal(symbol.name)))
 
   class RuleBuilder(val grammar: GrammarBuilder, val name: String) {
     def build(productions: ProductionList) = {
@@ -52,7 +46,6 @@ class GrammarBuilder() {
 
   def left(string: String) = precedence(Left, string)
   def right(string: String) = precedence(Right, string)
-  def unary(string: String) = precedence(Unary, string)
 
   override def toString = rules.mkString("\n")
 }

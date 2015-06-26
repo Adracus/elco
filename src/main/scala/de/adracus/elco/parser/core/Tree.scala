@@ -38,7 +38,7 @@ case class Node(rule: Rule, children: Seq[Tree]) extends Tree {
     if (rule.evaluation.isDefined) rule.evaluation.get(subEvaluation)
     else {
       if (subEvaluation.isEmpty) Unit
-      else subEvaluation.head
+      else subEvaluation.last
     }
   }
 

@@ -22,6 +22,6 @@ class ElcoTransformer {
 object ElcoTransformer extends App {
   val transformer = new ElcoTransformer()
 
-  val tree = transformer.transform("3 + 6 + 3 + 7")
+  val tree = transformer.transform("test = 3; test = test + 5; test")
   println(tree.evaluate())
 }
