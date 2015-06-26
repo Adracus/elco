@@ -1,6 +1,6 @@
 package de.adracus.elco.parser
 
-import de.adracus.elco.grammar.{Grammar, Precedence, Rule}
+import de.adracus.elco.grammar.{AugmentedGrammar, Precedence, Rule}
 
 /**
  * Created by axel on 15/06/15.
@@ -27,7 +27,7 @@ class ParseTable(
 }
 
 object ParseTable {
-  def generate(grammar: Grammar) = {
+  def generate(grammar: AugmentedGrammar) = {
     val sets = ItemSet.all(grammar)
     val eGrammar = new ExtendedGrammar(grammar, sets.toSet)
     val transitionTable = new TransitionTable(sets, grammar.rules)

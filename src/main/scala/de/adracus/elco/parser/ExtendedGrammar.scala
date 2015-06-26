@@ -7,7 +7,7 @@ import scala.Function.tupled
 /**
  * Created by axel on 10/06/15.
  */
-class ExtendedGrammar(grammar: Grammar, itemSets: Set[ItemSet]) {
+class ExtendedGrammar(grammar: AugmentedGrammar, itemSets: Set[ItemSet]) {
   private def computeRules(): Set[ExtendedRule] = {
     val itemsAtStart = itemSets.flatMap { itemSet =>
       itemSet.itemsAtStart.map((itemSet, _))

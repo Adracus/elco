@@ -1,5 +1,4 @@
-import de.adracus.elco.grammar.{Word, NonTerminal, Rule, Production}
-import de.adracus.elco.grammar.core.Word
+import de.adracus.elco.grammar.{NonTerminal, Production, Rule, Word}
 import de.adracus.elco.parser.Item
 import org.scalatest.{FunSpec, Matchers}
 

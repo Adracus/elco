@@ -1,6 +1,6 @@
 package de.adracus.elco.parser
 
-import de.adracus.elco.grammar.{Grammar, NonTerminal, Producable, Rule}
+import de.adracus.elco.grammar.{AugmentedGrammar, NonTerminal, Producable, Rule}
 
 import scala.annotation.tailrec
 import scala.collection.mutable
@@ -28,7 +28,7 @@ case class ItemSet(items: Set[Item]) extends Iterable[Item] {
 }
 
 object ItemSet {
-  def all(grammar: Grammar) = {
+  def all(grammar: AugmentedGrammar) = {
     val start = ItemSet.from(grammar.startRule, grammar.rules)
     val startSet = new mutable.LinkedHashSet[ItemSet]()
     startSet += start

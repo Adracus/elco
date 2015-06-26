@@ -120,7 +120,7 @@ class Parser(parseTable: ParseTable) {
 }
 
 object Parser {
-  def parsing(grammar: Grammar) = {
+  def parsing(grammar: AugmentedGrammar) = {
     val parseTable = ParseTable.generate(grammar)
     new Parser(parseTable)
   }

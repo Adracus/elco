@@ -1,8 +1,7 @@
 package de.adracus.elco.evaluator
 
-import de.adracus.elco.grammar.{NonTerminal, Rule, Production}
-import de.adracus.elco.grammar.core._
-import de.adracus.elco.parser.{Node, Leaf, Tree}
+import de.adracus.elco.grammar.{NonTerminal, Production, Rule}
+import de.adracus.elco.parser.{Leaf, Node, Tree}
 
 import scala.collection.mutable
 
@@ -36,7 +35,6 @@ class Evaluator {
 
   val on = new RuleEvaluatorBuilder
 
-  import de.adracus.elco.parser.core._
   def evaluate(tree: Tree): Any = tree match {
     case leaf: Leaf =>
       leaf.token.value.getOrElse(Unit)

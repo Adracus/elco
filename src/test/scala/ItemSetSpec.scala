@@ -1,5 +1,4 @@
-import de.adracus.elco.grammar.{Word, NonTerminal, GrammarBuilder}
-import de.adracus.elco.grammar.core._
+import de.adracus.elco.grammar.{Grammar, NonTerminal, Word}
 import de.adracus.elco.parser.Parser
 import de.adracus.elco.production.ElcoLexer
 import org.scalatest.{FunSpec, Matchers}
@@ -8,13 +7,13 @@ import org.scalatest.{FunSpec, Matchers}
  * Created by axel on 09/06/15.
  */
 class ItemSetSpec extends FunSpec with Matchers {
-  object TestGrammarBuilder extends GrammarBuilder {
+  object TestGrammar extends Grammar {
     'L := 'E & 'L | 'E
     'E := 'E & "+" & 'E | 'Number
     'Number := "INTEGER" | "DOUBLE"
   }
 
-  val grammar = TestGrammarBuilder.build()
+  val grammar = TestGrammar.build()
 
   def n(name: String) = NonTerminal(name)
   def t(name: String) = Word(name)
