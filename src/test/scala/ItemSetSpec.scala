@@ -1,6 +1,7 @@
+import de.adracus.elco.grammar.{Word, NonTerminal, GrammarBuilder}
 import de.adracus.elco.grammar.core._
-import de.adracus.elco.lexer.production.ElcoLexer
-import de.adracus.elco.parser.core.Parser
+import de.adracus.elco.parser.Parser
+import de.adracus.elco.production.ElcoLexer
 import org.scalatest.{FunSpec, Matchers}
 
 /**

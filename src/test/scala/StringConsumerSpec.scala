@@ -1,5 +1,5 @@
+import de.adracus.elco.lexer.consumer.StringConsumer
 import de.adracus.elco.lexer.core._
-import de.adracus.elco.lexer.production.StringConsumer
 import org.scalatest.{FunSpec, Matchers}
 
 /**

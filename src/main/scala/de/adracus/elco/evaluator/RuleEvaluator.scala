@@ -1,6 +1,6 @@
 package de.adracus.elco.evaluator
 
-import de.adracus.elco.grammar.core.Rule
+import de.adracus.elco.grammar.Rule
 
 /**
  * Created by axel on 26/06/15.

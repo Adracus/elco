@@ -1,5 +1,5 @@
 import de.adracus.elco.lexer.core.{Position, Token}
-import de.adracus.elco.lexer.production.ElcoLexer
+import de.adracus.elco.production.ElcoLexer
 import org.scalatest.{FunSpec, Matchers}
 
 /**
