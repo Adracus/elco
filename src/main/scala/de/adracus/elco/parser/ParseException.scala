@@ -18,7 +18,7 @@ sealed trait ParseException extends Exception {
 }
 
 case class UnexpectedException(actualToken: Token, expectedStatements: Set[Statement]) extends ParseException {
-  override def toString = s"Unexpected $actual, expected $expected"
+  override def toString = s"Unexpected $actual at ${actualToken.position}, expected $expected"
 
   def actual = wrap(actualToken.name)
 }

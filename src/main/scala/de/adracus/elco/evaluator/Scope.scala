@@ -9,13 +9,25 @@ class Scope(tuples: (String, Any)*) {
 
   def apply(key: String) = node(key)
 
-  def ++=(tuples: (String, Any)*) = node ++= (tuples:_*)
+  def ++=(tuples: (String, Any)*): Unit = node ++= (tuples:_*)
+
+  def ++=(map: Map[String, Any]): Unit = node ++= map
 
   def +=(tuple: (String, Any)) = node += tuple
 
-  def push() = node = node.makeChild()
+  def push() = {
+    node = node.makeChild()
+    this
+  }
 
   def set(key: String, value: Any) = node.set(key, value)
 
-  def pop() = node = node.parent.get
+  def pop(n: Int = 1) = {
+    for (_ <- 0 until n) {
+      node = node.parent.get
+    }
+    this
+  }
+
+  def condensed() = node.condensed()
 }

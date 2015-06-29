@@ -22,8 +22,13 @@ class ScopeNode(val parent: Option[ScopeNode]) {
     }
   }
 
+  def ++=(map: Map[String, Any]): Unit = {
+    map.foreach(this += _)
+  }
+
   def +=(tuple: (String, Any)): Any = {
     set(tuple._1, tuple._2)
+    tuple._2
   }
 
   def setAll(tuples: Seq[(String, Any)]) = values ++= tuples

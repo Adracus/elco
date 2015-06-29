@@ -17,13 +17,23 @@ object ElcoGrammar extends Grammar {
 
   'Function := "fn" & "IDENTIFIER" & 'ArgList & "{" & 'L & "}"
 
+  'ExpList := 'E | 'E & "," & 'ExpList
+
   'E := 'E & "+" & 'E
+
+  'E := 'E & "-" & 'E
+
+  'E := 'Call
+
+  'Call := "IDENTIFIER" & "(" & 'ExpList & ")" | "IDENTIFIER" & "(" & ")"
 
   'E := 'E & "==" & 'E
 
   'E := 'E & "^" & 'E
 
   'ClassDef := "class" & "IDENTIFIER" & "{" & 'L & "}"
+
+  'Conditional := "when" & 'E & "{" & 'L & "}"
 
   'Conditional := "if" & 'E & "{" & 'L & "}" & "else" & "{" & 'L & "}"
 

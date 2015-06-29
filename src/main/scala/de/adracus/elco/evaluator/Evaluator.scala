@@ -3,6 +3,7 @@ package de.adracus.elco.evaluator
 import de.adracus.elco.grammar._
 import de.adracus.elco.parser.{Leaf, Node, Tree}
 
+
 import scala.collection.mutable
 
 /**
@@ -12,6 +13,15 @@ class Evaluator extends ProductionDSL {
   private val evaluators = new mutable.HashMap[Rule, RuleEvaluator]()
 
   val scope = new Scope
+
+  case class Caller[T>:Null<:AnyRef](clazz: T) {
+    def call(methodName:String,args:AnyRef*):AnyRef = {
+      def argTypes = args.map(_.getClass)
+      def method = clazz.getClass.getMethod(methodName, argTypes: _*)
+      method.invoke(clazz,args: _*)
+    }
+  }
+  implicit def anyToCallable[T>:Null<:AnyRef](clazz: T):Caller[T] = new Caller(clazz)
 
   private def add(ruleEvaluator: RuleEvaluator) = evaluators(ruleEvaluator.rule) = ruleEvaluator
 
