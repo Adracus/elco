@@ -7,13 +7,35 @@ import de.adracus.elco.grammar.Grammar
  * Created by axel on 26/05/15.
  */
 object ElcoGrammar extends Grammar {
-  'L := 'E & ";" & 'L | 'E & "NEWLINE" & 'L | 'E
+  'L := 'E & 'Separator & 'L | 'E
+
+  'Separator := ";" | "NEWLINE"
+
+  'ArgList := "(" & ")" | "(" & 'List & ")"
+
+  'List := "IDENTIFIER" & "," & 'List | "IDENTIFIER"
+
+  'Function := "fn" & "IDENTIFIER" & 'ArgList & "{" & 'L & "}"
 
   'E := 'E & "+" & 'E
 
+  'E := 'E & "==" & 'E
+
   'E := 'E & "^" & 'E
 
+  'ClassDef := "class" & "IDENTIFIER" & "{" & 'L & "}"
+
+  'Conditional := "if" & 'E & "{" & 'L & "}" & "else" & "{" & 'L & "}"
+
+  'E := 'Conditional
+
   'E := "INTEGER"
+
+  'E := "pass"
+
+  'E := 'Function
+
+  'E := 'ClassDef
 
   'E := "IDENTIFIER" & "=" & 'E
 

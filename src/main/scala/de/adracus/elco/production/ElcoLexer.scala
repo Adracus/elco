@@ -13,7 +13,12 @@ object ElcoLexer extends Lexer {
   keyword("when")
   keyword("else")
   keyword("while")
+  keyword("class")
+  keyword("fn")
+  keyword("pass")
 
+  symbol(",")
+  symbol("==")
   symbol(";")
   symbol("=")
   symbol("+")

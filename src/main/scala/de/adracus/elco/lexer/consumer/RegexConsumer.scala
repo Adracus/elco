@@ -27,5 +27,5 @@ class RegexConsumer(regex: String, val name: String, val transform: Option[Strin
 
 object RegexConsumer {
   def literal(literal: String) = new RegexConsumer(
-    Pattern.quote(literal), literal.toUpperCase)
+    Pattern.quote(literal), literal)
 }

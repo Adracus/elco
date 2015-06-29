@@ -11,7 +11,22 @@ import scala.collection.mutable
 class Evaluator extends ProductionDSL {
   private val evaluators = new mutable.HashMap[Rule, RuleEvaluator]()
 
+  val scope = new Scope
+
   private def add(ruleEvaluator: RuleEvaluator) = evaluators(ruleEvaluator.rule) = ruleEvaluator
+
+  protected def unwrap(f: () => Any): Any = {
+    val unwrapped = f()
+    unwrapped match {
+      case u: (() => Any) => unwrap(u)
+      case default => default
+    }
+  }
+
+  protected def e[A](any: Any) = any match {
+    case f: (() => Any) => unwrap(f).asInstanceOf[A]
+    case default => default.asInstanceOf[A]
+  }
 
   protected class RuleBuilder(val nonTerminal: NonTerminal) {
     def :=(production: Production) = Rule(nonTerminal, production)
@@ -22,21 +37,48 @@ class Evaluator extends ProductionDSL {
   implicit def ruleToEvaluationBuilder(rule: Rule): EvaluatorBuilder = new EvaluatorBuilder(rule)
 
   protected class EvaluatorBuilder(val rule: Rule) {
-    def evaluate(evaluation: Seq[Any] => Any): Unit = {
-      add(new RuleEvaluator(rule, evaluation))
+    def eval(evaluation: Seq[Any] => Any): Unit = {
+      val evalWrapper = (values: Seq[Any]) => {
+        evaluation(values.map{
+          case f: (() => Any) => unwrap(f)
+          case default => default
+        })
+      }
+      add(new RuleEvaluator(rule, evalWrapper))
     }
 
-    def apply(evaluation: Seq[Any] => Any) = evaluate(evaluation)
+    def apply(evaluation: Seq[Any] => Any) = {
+      add(new RuleEvaluator(rule, evaluation))
+    }
   }
 
-  def eval(tree: Tree): Any = tree match {
+  def eval(node: Node): () => Any =  {
+    val inner = innerEval(node)
+    inner.asInstanceOf[() => Any]
+  }
+
+  def innerEval(tree: Tree): Any = tree match {
     case leaf: Leaf =>
       leaf.token.value.getOrElse(Unit)
 
     case n: Node =>
-      val subEvaluations = n.children.map(eval)
-      evaluators.get(n.rule)
-        .map(_.evaluation(subEvaluations))
-        .getOrElse(Unit)
+      val subEvaluations = n.children.map(innerEval)
+      () => evaluators.get(n.rule)
+        .map(_.evaluation)
+        .getOrElse(defaultEvaluation(n.rule) _)
+        .apply(subEvaluations)
+  }
+
+  protected def defaultEvaluation(rule: Rule)(input: Seq[Any]): Any = {
+    println(s"No evaluation defined for '$rule', applying default")
+    defaultEvaluator(input)
+  }
+
+  protected def defaultEvaluator(input: Seq[Any]): Any = {
+    input map {
+      case f: (() => Any) => unwrap(f)
+
+      case default => default
+    }
   }
 }

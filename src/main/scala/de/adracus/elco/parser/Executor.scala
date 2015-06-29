@@ -10,11 +10,11 @@ import de.adracus.elco.lexer.core.Lexer
 class Executor(val lexer: Lexer, val grammarBuilder: Grammar, val evaluator: Evaluator) {
   val parser = Parser parsing grammarBuilder.build()
 
-  def evaluate(string: String, printTree: Boolean = false): Any = {
+  def evaluate(string: String, printTree: Boolean = false): () => Any = {
     val stream = lexer.lex(string)
     val parseTreeRoot = parser.parse(stream)
     if (printTree)
-      println(parseTreeRoot)
+      println(parseTreeRoot.toFormatted)
     evaluator.eval(parseTreeRoot)
   }
 }
