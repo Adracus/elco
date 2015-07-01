@@ -21,9 +21,10 @@ class Evaluator extends ProductionDSL {
       method.invoke(clazz,args: _*)
     }
   }
+
   implicit def anyToCallable[T>:Null<:AnyRef](clazz: T):Caller[T] = new Caller(clazz)
 
-  private def add(ruleEvaluator: RuleEvaluator) = evaluators(ruleEvaluator.rule) = ruleEvaluator
+  private def set(ruleEvaluator: RuleEvaluator) = evaluators(ruleEvaluator.rule) = ruleEvaluator
 
   protected def unwrap(f: () => Any): Any = {
     val unwrapped = f()
@@ -54,11 +55,57 @@ class Evaluator extends ProductionDSL {
           case default => default
         })
       }
-      add(new RuleEvaluator(rule, evalWrapper))
+      set(new RuleEvaluator(rule, evalWrapper))
+    }
+
+    def constant(any: Any): Any = {
+      set(new RuleEvaluator(rule, _ => any))
+    }
+
+    protected class IfBuilder(val rule: Rule, val condition: Int) {
+      private var _then: Option[Int] = None
+
+      def Then(n: Int) = {
+        assert(_then.isEmpty)
+        _then = Some(n)
+        set(new RuleEvaluator(rule, { seq =>
+          if (e[Boolean](seq(condition))) {
+            e[Any](seq(_then.get))
+          }
+        }))
+        this
+      }
+
+      def Else(_else: Int): Unit = {
+        set(new RuleEvaluator(rule, { seq =>
+          if (e[Boolean](seq(condition))) {
+            e[Any](seq(_then.get))
+          } else {
+            e[Any](seq(_else))
+          }
+        }))
+      }
+    }
+
+    def If(n: Int) = new IfBuilder(rule, n)
+
+    def unit(): Unit = {
+      val evaluator = (defaultEvaluator _).andThen(_ => Unit)
+      set(new RuleEvaluator(rule, evaluator))
+    }
+
+    def asLast(): Any = {
+      val evaluator = (defaultEvaluator _).andThen(_.last)
+      set(new RuleEvaluator(rule, evaluator))
+    }
+
+    def at(n: Int): Any = {
+      val evaluator = (defaultEvaluator _).andThen(_.apply(n))
+      set(new RuleEvaluator(rule, evaluator))
     }
 
     def apply(evaluation: Seq[Any] => Any) = {
-      add(new RuleEvaluator(rule, evaluation))
+      set(new RuleEvaluator(rule, evaluation))
     }
   }
 
@@ -84,7 +131,7 @@ class Evaluator extends ProductionDSL {
     defaultEvaluator(input)
   }
 
-  protected def defaultEvaluator(input: Seq[Any]): Any = {
+  protected def defaultEvaluator(input: Seq[Any]): Seq[Any] = {
     input map {
       case f: (() => Any) => unwrap(f)
 

@@ -13,6 +13,14 @@ abstract class Lexer {
 
   def symbol(symbol: String) = keyword(symbol)
 
+  def regex(regex: String, name: String): Unit = {
+    addConsumer(new RegexConsumer(regex, name))
+  }
+
+  def regex(regex: String, name: String, conversion: String => Any): Unit = {
+    addConsumer(new RegexConsumer(regex, name, Some(conversion)))
+  }
+
   def keyword(keyword: String): Unit = addConsumer(RegexConsumer.literal(keyword))
 
   def tryMatch(lexingText: LexingText) = {
