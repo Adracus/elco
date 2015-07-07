@@ -7,7 +7,9 @@ import de.adracus.elco.lexer.core.Lexer
  * Created by axel on 21/05/15.
  */
 object ElcoLexer extends Lexer {
-  val identifier = "[a-zA-Z$_][a-zA-Z0-9$_&|*/%+-]*"
+  val identifierBody = "[a-zA-Z0-9$_&|*/%+-]*"
+  val identifierHead = "[a-zA-Z$_]"
+  val identifier = s"$identifierHead$identifierBody"
 
   keyword("if")
   keyword("when")
@@ -18,14 +20,18 @@ object ElcoLexer extends Lexer {
   keyword("pass")
 
   symbol(",")
-  symbol("==")
+  symbol(":")
   symbol(";")
+  symbol(":=")
   symbol("=")
-  symbol("+")
-  symbol("-")
-  symbol("*")
-  symbol("^")
-  symbol("/")
+
+  regex(s"==$identifierBody", "COMPARE_OP")
+  regex(s"\\+$identifierBody", "PLUS_OP")
+  regex(s"-$identifierBody", "MINUS_OP")
+  regex(s"\\*$identifierBody", "MUL_OP")
+  regex(s"\\^$identifierBody", "POW_OP")
+  regex(s"\\/$identifierBody", "DIV_OP")
+
   symbol("(")
   symbol(")")
   symbol("{")
@@ -33,9 +39,10 @@ object ElcoLexer extends Lexer {
 
   ignore("\\h")
 
-  addConsumer(new RegexConsumer("\n", "NEWLINE"))
-  addConsumer(new RegexConsumer("\\d+", "INTEGER", Some(_.toInt)))
-  addConsumer(new RegexConsumer("\\d+\\.\\d+", "DOUBLE", Some(_.toDouble)))
-  addConsumer(new RegexConsumer(identifier, "IDENTIFIER", Some(_.toString)))
+  regex("\n", "NEWLINE")
+  regex("\\d+", "INTEGER", _.toInt)
+  regex("\\d+\\.\\d+", "DOUBLE", _.toDouble)
+  regex(identifier, "IDENTIFIER", identity[String])
+
   addConsumer(new StringConsumer("\"", "\\", newLineSymbol))
 }

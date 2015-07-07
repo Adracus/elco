@@ -16,13 +16,9 @@ class Parser(parseTable: ParseTable) {
 
   def state = stack.top
 
-  def action(token: Token) = {
-    parseTable.action(state, wrap(token))
-  }
+  def action(token: Token) = parseTable.action(state, wrap(token))
 
-  def wrap(token: Token) = {
-    if (token.name == "EOF") End else Word(token.name)
-  }
+  def wrap(token: Token) = if (token.name == "EOF") End else Word(token.name)
 
   def parse(tokenStream: TokenStream) = {
     var finished = false

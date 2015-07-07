@@ -3,24 +3,30 @@ package de.adracus.elco.evaluator
 /**
  * Created by axel on 27/06/15.
  */
-class Scope(tuples: (String, Any)*) {
-  private var node = ScopeNode.root()
+class Scope[A, B](tuples: (A, B)*) {
+  private var node = ScopeNode.root[A, B]()
   node ++= (tuples:_*)
 
-  def apply(key: String) = node(key)
+  def apply(key: A) = node(key)
 
-  def ++=(tuples: (String, Any)*): Unit = node ++= (tuples:_*)
+  def contains(key: A) = node.contains(key)
 
-  def ++=(map: Map[String, Any]): Unit = node ++= map
+  def get(key: A) = node.get(key)
 
-  def +=(tuple: (String, Any)) = node += tuple
+  def getOrElse(key: A, orElse: => B) = node.getOrElse(key, orElse)
+
+  def ++=(tuples: (A, B)*): Unit = node ++= (tuples:_*)
+
+  def ++=(map: Map[A, B]): Unit = node ++= map
+
+  def +=(tuple: (A, B)) = node += tuple
 
   def push() = {
     node = node.makeChild()
     this
   }
 
-  def set(key: String, value: Any) = node.set(key, value)
+  def set(key: A, value: B) = node.set(key, value)
 
   def pop(n: Int = 1) = {
     for (_ <- 0 until n) {

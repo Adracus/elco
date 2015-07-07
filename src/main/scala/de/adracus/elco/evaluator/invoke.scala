@@ -4,7 +4,7 @@ package de.adracus.elco.evaluator
  * Created by axel on 29/06/15.
  */
 object invoke {
-  def apply(any: AnyRef, args: List[Any]) = any match {
+  def apply(any: Any, args: List[Any]) = any match {
     case f: (() => Any) => f()
     case f: ((Any) => Any) => f(args.head)
     case f: ((Any, Any) => Any) => f(args.head, args(1))
@@ -12,6 +12,6 @@ object invoke {
   }
 
   implicit class Invoke(val any: Any) {
-    def apply(args: List[Any]) = invoke(any.asInstanceOf[AnyRef], args)
+    def apply(args: List[Any]) = invoke.this(any.asInstanceOf[AnyRef], args)
   }
 }

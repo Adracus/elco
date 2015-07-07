@@ -7,7 +7,7 @@ import de.adracus.elco.lexer.core.Lexer
 /**
  * Created by axel on 26/06/15.
  */
-class Executor(val lexer: Lexer, val grammarBuilder: Grammar, val evaluator: Evaluator) {
+class Executor(val lexer: Lexer, val grammarBuilder: Grammar, val evaluator: Evaluator[_, _]) {
   val parser = Parser parsing grammarBuilder.build()
 
   def evaluate(string: String, printTree: Boolean = false): () => Any = {

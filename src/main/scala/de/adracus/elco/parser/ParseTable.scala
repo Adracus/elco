@@ -17,11 +17,7 @@ class ParseTable(
   val action = new ActionTable(transitionTable, itemSets, startingRule, enumerator, reduceTable)
   val goto = new GotoTable(transitionTable, enumerator)
 
-  def expected(state: Int) = {
-    action.table.collect {
-      case ((otherState, statement), _) if otherState == state => statement
-    }.toSet
-  }
+  def expected(state: Int) = action.expected(state)
 
   def precedenceOf(string: String) = precedendes.find(_.string == string)
 }

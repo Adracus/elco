@@ -9,10 +9,10 @@ import scala.collection.mutable
 /**
  * Created by axel on 26/06/15.
  */
-class Evaluator extends ProductionDSL {
+abstract class Evaluator[A, B] extends ProductionDSL {
   private val evaluators = new mutable.HashMap[Rule, RuleEvaluator]()
 
-  val scope = new Scope
+  val scope = new Scope[A, B]
 
   case class Caller[T>:Null<:AnyRef](clazz: T) {
     def call(methodName:String,args:AnyRef*):AnyRef = {

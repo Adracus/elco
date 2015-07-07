@@ -16,6 +16,12 @@ class ActionTable(
 
   def apply(state: Int, statement: Statement) = table((state, statement))
 
+  def expected(state: Int) = {
+    table.collect {
+      case ((other, statement), _) if state == other => statement
+    }.toSet
+  }
+
   private def computeTable() = {
     val table = new mutable.HashMap[(Int, Statement), Action]()
     itemSets.filter(hasEndRule).foreach { itemSet =>

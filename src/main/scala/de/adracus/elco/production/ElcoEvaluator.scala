@@ -1,85 +1,109 @@
 package de.adracus.elco.production
 
-import de.adracus.elco.evaluator.{makeFunction, invoke, Evaluator}
+import de.adracus.elco.evaluator.{makeFunction, Evaluator, invoke}
 import de.adracus.elco.grammar.Rule
+
+import scala.collection.mutable
 
 /**
  * Created by axel on 26/06/15.
  */
-class ElcoEvaluator extends Evaluator {
-  ('L := 'E & ";" & 'L) eval {
-    case Seq(_, _, e) => e
+sealed trait Variable {
+  def value: Any
+  def value_=(value: Any): Unit
+  def as[A]: A = value.asInstanceOf[A]
+}
+
+class Var(var value: Any) extends Variable
+object Var {
+  def apply(any: Any) = new Var(any)
+}
+case class Val(value: Any) extends Variable {
+  def value_=(value: Any) = {
+    throw new Exception("Cannot assign to val")
   }
+}
+
+class ElcoEvaluator extends Evaluator[String, Variable] {
+  val Class = new Klass("Class", null, null)
+  Class.klass = Class
+
+  val Object = Class.extension("Object")
+  val Method = Object.extension("Method")
+
+  class MethodInstance(
+    val fn: AnyVal)
+    extends Instance(Method, Method.methods, Method.properties) {
+    def call(args: List[Any]) = invoke(fn, args)
+  }
+
+  Class.sup = Object
+  Object.sup = Object
+
+  def mkMap(classes: Klass*) = {
+    classes.foldLeft(Map[String, Val]()) { (acc, current) =>
+      acc.+((current.name, Val(current)))
+    }
+  }
+
+  scope ++= mkMap(Class, Object, Method)
+
+  ('L := 'E & 'Separator & 'L) asLast()
+
+  ('Separator := ";") unit()
+
+  ('Separator := "NEWLINE") unit()
 
   ('ClassDef := "class" & "IDENTIFIER" & "{" & 'L & "}") eval {
     case Seq(_, name: String, _, l, _) =>
       println(s"DEFINE CLASS '$name'")
   }
 
-  ('E := 'Call) eval {
-    case Seq(call) => call
-  }
+  ('E := 'Call) asLast()
 
   ('Function := "fn" & "IDENTIFIER" & 'ArgList & "{" & 'L & "}") {
     case Seq(_, n, a, _, l, _) =>
-      import de.adracus.elco.evaluator.wrap._
-
       val name = e[String](n)
       val args = e[List[String]](a)
-      println(s"DEFINE FUNCTION $name WITH ARGS ${args.mkString(", ")}")
       val len = args.length
-
       val condensedScope = scope.condensed()
-      def prolog() = {
+
+      val f = makeFunction(len) { values =>
         scope.push()
         scope ++= condensedScope
-      }
-      val f = makeFunction(len, () =>
-        e[Any](l)).wrapped({ vals =>
-        prolog()
-        scope.push()
         for (i <- 0 until len) {
-          scope += (args(i), vals(i))
+          scope += args(i) -> Val(values(i))
         }
-      }, (_, _) => scope.pop(2))
+        val res = e[Any](l)
+        scope.pop()
+        res
+      }
 
-      scope += name -> f
-      f
+      scope += name -> Val(new MethodInstance(f.asInstanceOf[AnyVal]))
   }
 
-  ('ArgList := "(" & ")") eval {
-    _ => List.empty[String]
-  }
+  ('ArgList := "(" & ")") constant List.empty[String]
 
-  ('ArgList := "(" & 'List & ")") eval {
-    case Seq(_, list, _) => list
-  }
+  ('ArgList := "(" & 'List & ")") at 1
 
   ('List := "IDENTIFIER" & "," & 'List) eval {
     case Seq(name: String, _, list: List[_]) =>
       name +: list
   }
 
-  ('List := "IDENTIFIER") eval {
-    case Seq(name: String) => List(name)
-  }
+  ('List := "IDENTIFIER") eval (_.toList)
 
-  ('L := 'E) eval {
-    case Seq(e) => e
-  }
+  ('L := 'E) asLast()
 
-  ('Conditional := "if" & 'E & "{" & 'L & "}" & "else" & "{" & 'L & "}") {
-    case Seq(_, condition, _, ifBody, _, _, _, elseBody, _) =>
-      if (e[Boolean](condition)) {
-        e[Any](ifBody)
-      } else {
-        e[Any](elseBody)
-      }
-  }
+  ('Conditional := "if" & 'E & 'Wrapped & "else" & 'Wrapped) If 1 Then 2 Else 4
 
-  ('ExpList := 'E) eval {
-    case Seq(e) => List(e)
-  }
+  ('Conditional := "if" & 'E & 'Wrapped) If 1 Then 2
+
+  ('Wrapped := "{" & 'L & "}") at 1
+
+  ('Wrapped := ":" & 'E) asLast()
+
+  ('ExpList := 'E) eval(_.toList)
 
   ('ExpList := 'E & "," & 'ExpList) eval {
     case Seq(e, _, l: List[_]) =>
@@ -88,46 +112,52 @@ class ElcoEvaluator extends Evaluator {
 
   ('Call := "IDENTIFIER" & "(" & 'ExpList & ")") eval {
     case Seq(name: String, _, args: List[_], _) =>
-      import de.adracus.elco.evaluator.invoke._
-      println("Invoking " + name)
-      scope(name)(args)
+      val method = scope(name).value
+      if (!method.isInstanceOf[MethodInstance]) {
+        throw new Exception("Cannot invoke non-function")
+      }
+      method.asInstanceOf[MethodInstance].call(args)
   }
 
-  ('E := 'E & "==" & 'E) eval {
+  ('E := 'E & "COMPARE_OP" & 'E) eval {
     case Seq(a: Int, _, b: Int) => a == b
   }
 
-  ('E := 'Function) eval {
-    case Seq(e) => e
-  }
+  ('E := 'Function) asLast()
 
   ('E := "IDENTIFIER") eval {
-    case Seq(name: String) => scope(name)
+    case Seq(name: String) => scope(name).value
   }
 
-  ('E := "pass") eval {
-    _ => Unit
-  }
+  ('E := "pass") unit()
 
-  ('E := "INTEGER") eval {
-    case Seq(i) => i
-  }
+  ('E := "INTEGER") asLast()
 
-  ('E := 'E & "+" & 'E) eval {
+  ('E := 'E & "PLUS_OP" & 'E) eval {
     case Seq(e1: Int, _, e2: Int) => e1 + e2
   }
 
-  ('E := 'E & "-" & 'E) eval {
+  ('E := 'E & "MINUS_OP" & 'E) eval {
     case Seq(e1: Int, _, e2: Int) => e1 - e2
   }
 
-  ('E := 'Conditional) eval {
-    case Seq(c) => c
+  ('E := 'Assignment) asLast()
+
+  ('E := 'Conditional) asLast()
+
+  ('Assignment := "IDENTIFIER" & "=" & 'E) eval {
+    case Seq(name: String, _, e) =>
+      val variable = scope.getOrElse(name, scope.set(name, new Var(null)))
+      variable.value = e
+      e
   }
 
-  ('E := "IDENTIFIER" & "=" & 'E) eval {
+  ('Assignment := "IDENTIFIER" & ":=" & 'E) eval {
     case Seq(name: String, _, e) =>
-      scope += name -> e
+      if (scope contains name)
+        throw new Exception("Cannot assign to already declared variable or value")
+      scope.set(name, Val(e))
+      e
   }
 
   override protected def defaultEvaluation(rule: Rule)(input: Seq[Any]): Any = {

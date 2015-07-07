@@ -19,15 +19,15 @@ object ElcoGrammar extends Grammar {
 
   'ExpList := 'E | 'E & "," & 'ExpList
 
-  'E := 'E & "+" & 'E
+  'E := 'E & "PLUS_OP" & 'E
 
-  'E := 'E & "-" & 'E
+  'E := 'E & "MINUS_OP" & 'E
 
   'E := 'Call
 
   'Call := "IDENTIFIER" & "(" & 'ExpList & ")" | "IDENTIFIER" & "(" & ")"
 
-  'E := 'E & "==" & 'E
+  'E := 'E & "COMPARE_OP" & 'E
 
   'E := 'E & "^" & 'E
 
@@ -35,7 +35,11 @@ object ElcoGrammar extends Grammar {
 
   'Conditional := "when" & 'E & "{" & 'L & "}"
 
-  'Conditional := "if" & 'E & "{" & 'L & "}" & "else" & "{" & 'L & "}"
+  'Conditional := "if" & 'E & 'Wrapped & "else" & 'Wrapped
+
+  'Conditional := "if" & 'E & 'Wrapped
+
+  'Wrapped := ":" & 'E | "{" & 'L & "}"
 
   'E := 'Conditional
 
@@ -47,14 +51,19 @@ object ElcoGrammar extends Grammar {
 
   'E := 'ClassDef
 
-  'E := "IDENTIFIER" & "=" & 'E
+  'E := 'Assignment
+
+  'Assignment := "IDENTIFIER" & ":=" & 'E | "IDENTIFIER" & "=" & 'E
 
   'E := "IDENTIFIER"
 
-  left("-")
-  left("*")
-  left("/")
+  left("PLUS_OP")
+  left("MINUS_OP")
+  left("MUL_OP")
+  left("DIV_OP")
 
   right("=")
-  right("^")
+  right(":=")
+  right("EQUALS_OP")
+  right("POW_OP")
 }
