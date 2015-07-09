@@ -18,17 +18,18 @@ class Grammar extends ProductionDSL {
     rules += rule
   }
 
-  implicit def symbolToBuilder(symbol: Symbol): RuleBuilder = new RuleBuilder(this, symbol.name)
+  implicit def symbolToRuleBuilder(symbol: Symbol): RuleBuilder = new RuleBuilder(this, symbol.name)
 
   class RuleBuilder(val grammar: Grammar, val name: String) {
-    def build(productions: ProductionList) = {
+    def build(production: ProductionList) = {
       val nonTerminal = NonTerminal(name)
-      productions.map(new Rule(nonTerminal, _)).foreach(add)
-      nonTerminal
+      production.foreach(production => add(new Rule(nonTerminal, production)))
     }
 
-    def := (productions: ProductionList): Unit = build(productions)
+    def := (string: String): Unit = :=(Production(List(Word(string)), None))
+    def := (symbol: Symbol): Unit = :=(Production(List(NonTerminal(symbol.name)), None))
     def := (production: Production): Unit = build(new ProductionList(production))
+    def := (productionList: ProductionList): Unit = build(productionList)
   }
 
   def build() = {

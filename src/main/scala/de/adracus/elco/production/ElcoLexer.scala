@@ -1,6 +1,6 @@
 package de.adracus.elco.production
 
-import de.adracus.elco.lexer.consumer.{RegexConsumer, StringConsumer}
+import de.adracus.elco.lexer.consumer.StringConsumer
 import de.adracus.elco.lexer.core.Lexer
 
 /**

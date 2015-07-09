@@ -27,7 +27,7 @@ class ExtendedGrammar(grammar: AugmentedGrammar, itemSets: Set[ItemSet]) {
       val rule = item.rule
       val nonTerminal = advance(List.empty, start, List(rule.nonTerminal)).head
       val production = ExtendedProduction(
-        advance(List.empty, start, rule.toList).asInstanceOf[List[ExtendedProducable]])
+        advance(List.empty, start, rule.toList).asInstanceOf[List[ExtendedProducable]], rule.onReduce)
       ExtendedRule(nonTerminal.asInstanceOf[ExtendedNonTerminal], production)
     }
   }

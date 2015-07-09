@@ -11,7 +11,7 @@ import scala.collection.mutable.ListBuffer
  */
 class Parser(parseTable: ParseTable) {
   private val stack = new mutable.Stack[Int]()
-  private val treeStack = new mutable.Stack[Tree]()
+  private val treeStack = new mutable.Stack[Any]()
   stack.push(0)
 
   def state = stack.top
@@ -30,7 +30,7 @@ class Parser(parseTable: ParseTable) {
     if (finished) {
       val result = treeStack.pop()
       reset()
-      result.asInstanceOf[Node]
+      result
     } else {
       reset()
       throw UnexpectedException(
@@ -40,13 +40,16 @@ class Parser(parseTable: ParseTable) {
   }
 
   private def reduce(rule: Rule) = {
-    val buffer = new ListBuffer[Tree]()
+    val buffer = new ListBuffer[Any]()
     for (_ <- 0 until rule.length) {
       stack.pop()
       buffer.append(treeStack.pop())
     }
 
-    treeStack.push(Node(rule, buffer.reverse.toSeq))
+    if (rule.onReduce.isDefined) {
+      val astItem = rule.onReduce.get(buffer.reverse.toSeq)
+      treeStack.push(astItem)
+    }
   }
 
   def reset() = {
@@ -58,8 +61,7 @@ class Parser(parseTable: ParseTable) {
   def execute(tokenStream: TokenStream, action: Action): Boolean = action match {
     case Shift(next) =>
       stack.push(next)
-      val leaf = Leaf(tokenStream.next())
-      treeStack.push(leaf)
+      treeStack.push(tokenStream.next())
       false
 
     case Reduce(rule) =>

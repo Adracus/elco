@@ -1,7 +1,5 @@
 package de.adracus.elco.production
 
-import de.adracus.elco.evaluator.{invoke, isFunction}
-
 import scala.collection.mutable
 
 trait Instantiatable {

@@ -1,5 +1,7 @@
 package de.adracus.elco.production
 
+import de.adracus.elco.ast._
+import de.adracus.elco.ast_nodes._
 import de.adracus.elco.grammar.Grammar
 
 
@@ -7,7 +9,11 @@ import de.adracus.elco.grammar.Grammar
  * Created by axel on 26/05/15.
  */
 object ElcoGrammar extends Grammar {
-  'L := 'E & 'Separator & 'L | 'E
+  'L := 'E & 'Separator & 'L on A[Int]() transform {
+
+  }
+
+  'L := 'E
 
   'Separator := ";" | "NEWLINE"
 
@@ -39,23 +45,31 @@ object ElcoGrammar extends Grammar {
 
   'Conditional := "if" & 'E & 'Wrapped
 
-  'Wrapped := ":" & 'E | "{" & 'L & "}"
+  'Wrapped := ":" & 'E last()
 
-  'E := 'Conditional
+  'Wrapped := "{" & 'L & "}" at 1
 
-  'E := "INTEGER"
+  'E := 'Conditional single()
 
-  'E := "pass"
+  'E := "INTEGER" on IntNumber transform Constant
 
-  'E := 'Function
+  'E := "pass" constant Unit
 
-  'E := 'ClassDef
+  'E := 'Function single()
 
-  'E := 'Assignment
+  'E := 'ClassDef single()
 
-  'Assignment := "IDENTIFIER" & ":=" & 'E | "IDENTIFIER" & "=" & 'E
+  'E := 'Assignment single()
 
-  'E := "IDENTIFIER"
+  'Assignment := "IDENTIFIER" & ":=" & 'E on A[Identifier]() % Ignore % A[Expression]() transform {
+    case (identifier, _, expression) => ValAssignment(identifier, expression)
+  }
+
+  'Assignment := "IDENTIFIER" & "=" & 'E on A[Identifier]() % Ignore % A[Expression]() transform {
+    case (identifier, _, expression) => ValAssignment(identifier, expression)
+  }
+
+  'E := "IDENTIFIER" on Text transform Identifier
 
   left("PLUS_OP")
   left("MINUS_OP")

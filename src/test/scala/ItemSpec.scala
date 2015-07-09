@@ -6,7 +6,7 @@ import org.scalatest.{FunSpec, Matchers}
  * Created by axel on 13/06/15.
  */
 class ItemSpec extends FunSpec with Matchers {
-  val rule = Rule(NonTerminal("A"), Production(List(NonTerminal("B"), Word("C"), Word("D"))))
+  val rule = Rule(NonTerminal("A"), Production(List(NonTerminal("B"), Word("C"), Word("D")), None))
 
   describe("Item") {
     describe("before") {

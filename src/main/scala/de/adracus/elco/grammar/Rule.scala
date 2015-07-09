@@ -5,11 +5,11 @@ package de.adracus.elco.grammar
  */
 case class Rule(nonTerminal: NonTerminal, production: Production) extends Iterable[Producable] {
 
-  override def toString = s"$nonTerminal := $production"
+  override def toString() = s"$nonTerminal := $production"
 
   def iterator: Iterator[Producable] = production.iterator
 
   def length = production.length
 
-  def +(producable: Producable) = Rule(nonTerminal, production & producable)
+  def onReduce = production.onReduce
 }

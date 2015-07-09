@@ -10,7 +10,7 @@ class ProductionList(val productions: Production*) extends Iterable[Production] 
 
   def or(other: ProductionList): ProductionList = new ProductionList(productions ++ other.productions:_*)
   def or(production: Production): ProductionList = or(new ProductionList(production))
-  def or(producable: Producable): ProductionList = or(Production(List(producable)))
+  def or(producable: Producable): ProductionList = or(Production(List(producable), None))
 
   def | (other: ProductionList): ProductionList = or(other)
   def | (production: Production): ProductionList = or(production)

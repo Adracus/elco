@@ -1,11 +1,13 @@
 package de.adracus.elco.parser
 
+import de.adracus.elco.ast.AstNode
 import de.adracus.elco.grammar._
 
 /**
  * Created by axel on 11/06/15.
  */
-case class ExtendedProduction(statements: List[ExtendedProducable]) extends Iterable[ExtendedProducable] {
+case class ExtendedProduction(statements: List[ExtendedProducable], onReduce: Option[Seq[Any] => AstNode])
+    extends Iterable[ExtendedProducable] {
   require(
     statements.nonEmpty,
     "A production cannot be empty")
@@ -37,7 +39,7 @@ case class ExtendedProduction(statements: List[ExtendedProducable]) extends Iter
 
   override def toString() = statements.mkString(" ")
 
-  def production = Production(statements.map(_.base).asInstanceOf[List[Producable]])
+  def production = Production(statements.map(_.base).asInstanceOf[List[Producable]], onReduce)
 
   def lastSet = statements.last.end
 }
