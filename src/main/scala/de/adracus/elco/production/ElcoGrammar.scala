@@ -9,9 +9,9 @@ import de.adracus.elco.grammar.Grammar
  * Created by axel on 26/05/15.
  */
 object ElcoGrammar extends Grammar {
-  'L := 'E & 'Separator & 'L on A[Int]() transform {
+  import Extractor._
 
-  }
+  'L := 'E & 'Separator & 'L on IntNumber to Constant
 
   'L := 'E
 

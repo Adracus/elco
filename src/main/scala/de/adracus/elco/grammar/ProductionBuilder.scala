@@ -4,6 +4,8 @@ import de.adracus.elco.ast._
 
 import scala.collection.mutable.ListBuffer
 
+import Extractor.{E1, E2, E3, E4, E5, E6}
+
 /**
  * Created by axel on 07/07/15.
  */
@@ -26,67 +28,47 @@ class ProductionBuilder(initialStatements: Producable*) {
 
   def last() = Production(statements.toList, Some(_.last.asInstanceOf[AstNode]))
 
-  def on[A, B](matcher: Extractor1[A, B]) =
-    new ReductionBuilder1(matcher)
+  def transform(f: Seq[_] => AstNode) = Production(statements.toList, Some(f))
 
-  def on[A1, A2, B1, B2](matcher: Extractor2[A1, A2, B1, B2]) =
-    new ReductionBuilder2[A1, A2, B1, B2](matcher)
+  def on[B1](e1: E1[B1]) = P1Builder(e1)
 
-  def on[A1, A2, A3, B1, B2, B3](matcher: Extractor3[A1, A2, A3, B1, B2, B3]) =
-    new ReductionBuilder3[A1, A2, A3, B1, B2, B3](matcher)
+  def on[B1, B2](e2: E2[B1, B2]) = P2Builder(e2)
 
-  def on[A1, A2, A3, A4, B1, B2, B3, B4](matcher: Extractor4[A1, A2, A3, A4, B1, B2, B3, B4]) =
-    new ReductionBuilder4[A1, A2, A3, A4, B1, B2, B3, B4](matcher)
+  def on[B1, B2, B3](e3: E3[B1, B2, B3]) = P3Builder(e3)
 
-  def on[A1, A2, A3, A4, A5, B1, B2, B3, B4, B5](matcher: Extractor5[A1, A2, A3, A4, A5, B1, B2, B3, B4, B5]) =
-    new ReductionBuilder5[A1, A2, A3, A4, A5, B1, B2, B3, B4, B5](matcher)
+  def on[B1, B2, B3, B4](e4: E4[B1, B2, B3, B4]) = P4Builder(e4)
 
-  case class ReductionBuilder1[A, B](matcher: Extractor1[A, B]) {
-    def transform(transform: B => AstNode) = {
-      Production(statements.toList, Some({
-        case Seq(a: A) =>
-          transform(matcher.extract(a))
-      }))
-    }
+  def on[B1, B2, B3, B4, B5](e5: E5[B1, B2, B3, B4, B5]) = P5Builder(e5)
+
+  def on[B1, B2, B3, B4, B5, B6](e6: E6[B1, B2, B3, B4, B5, B6]) = P6Builder(e6)
+
+  case class P1Builder[B1](e1: E1[B1]) {
+    def to(f: B1 => AstNode) =
+      Production(statements.toList, Some((seq: Seq[_]) => f(e1(seq))))
   }
 
-  case class ReductionBuilder2[A1, A2, B1, B2](
-      matcher: Extractor2[A1, A2, B1, B2]) {
-    def transform(transform: (B1, B2) => AstNode) = {
-      Production(statements.toList, Some({
-        case Seq(a: A1, b: A2) =>
-          transform.tupled(matcher.extract(a, b))
-      }))
-    }
+  case class P2Builder[B1, B2](e2: E2[B1, B2]) {
+    def to(e2: E2[B1, B2])(f: (B1, B2) => AstNode) =
+      Production(statements.toList, Some((seq: Seq[_]) => f.tupled(e2(seq))))
   }
 
-  case class ReductionBuilder3[A1, A2, A3, B1, B2, B3](
-      matcher: Extractor3[A1, A2, A3, B1, B2, B3]) {
-    def transform(transform: (B1, B2, B3) => AstNode) = {
-      Production(statements.toList, Some({
-        case Seq(a: A1, b: A2, c: A3) =>
-          transform.tupled(matcher.extract(a, b, c))
-      }))
-    }
+  case class P3Builder[B1, B2, B3](e3: E3[B1, B2, B3]) {
+    def to(f: (B1, B2, B3) => AstNode) =
+      Production(statements.toList, Some((seq: Seq[_]) => f.tupled(e3(seq))))
   }
 
-  case class ReductionBuilder4[A1, A2, A3, A4, B1, B2, B3, B4](
-      matcher: Extractor4[A1, A2, A3, A4, B1, B2, B3, B4]) {
-    def transform(transform: (B1, B2, B3, B4) => AstNode) = {
-      Production(statements.toList, Some({
-        case Seq(a: A1, b: A2, c: A3, d: A4) =>
-          transform.tupled(matcher.extract(a, b, c, d))
-      }))
-    }
+  case class P4Builder[B1, B2, B3, B4](e4: E4[B1, B2, B3, B4]) {
+    def to(f: (B1, B2, B3, B4) => AstNode) =
+      Production(statements.toList, Some((seq: Seq[_]) => f.tupled(e4(seq))))
   }
 
-  case class ReductionBuilder5[A1, A2, A3, A4, A5, B1, B2, B3, B4, B5](
-      matcher: Extractor5[A1, A2, A3, A4, A5, B1, B2, B3, B4, B5]) {
-    def transform(transform: (B1, B2, B3, B4, B5) => AstNode) = {
-      Production(statements.toList, Some({
-        case Seq(a: A1, b: A2, c: A3, d: A4, e: A5) =>
-          transform.tupled(matcher.extract(a, b, c, d, e))
-      }))
-    }
+  case class P5Builder[B1, B2, B3, B4, B5](e5: E5[B1, B2, B3, B4, B5]) {
+    def to(f: (B1, B2, B3, B4, B5) => AstNode) =
+      Production(statements.toList, Some((seq: Seq[_]) => f.tupled(e5(seq))))
+  }
+
+  case class P6Builder[B1, B2, B3, B4, B5, B6](e6: E6[B1, B2, B3, B4, B5, B6]) {
+    def to(f: (B1, B2, B3, B4, B5, B6) => AstNode) =
+      Production(statements.toList, Some((seq: Seq[_]) => f.tupled(e6(seq))))
   }
 }
