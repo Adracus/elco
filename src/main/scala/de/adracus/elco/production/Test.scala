@@ -1,5 +1,7 @@
 package de.adracus.elco.production
 
+import de.adracus.elco.Constant
+import de.adracus.elco.ast.AstNode
 import de.adracus.elco.parser.Parser
 
 /**
@@ -7,9 +9,9 @@ import de.adracus.elco.parser.Parser
  */
 object Test extends App {
   val grammar = ElcoGrammar.build()
-  println(ElcoGrammar.toString)
   val parser = Parser parsing grammar
   val lexer = ElcoLexer
 
-  val ast = parser.parse(lexer.lex("10"))
+  val ast = parser.parse(lexer.lex("10")).asInstanceOf[AstNode]
+  println(ast.toTreeString)
 }

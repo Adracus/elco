@@ -107,12 +107,11 @@ class Parser(parseTable: ParseTable) {
       val todo = action(tokenStream.lookahead)
       execute(tokenStream, todo)
     } catch {
-      case n: NoSuchElementException => {
+      case n: NoSuchElementException =>
         reset()
         throw UnexpectedException(
           tokenStream.lookahead,
           parseTable.expected(state))
-      }
     }
   }
 }

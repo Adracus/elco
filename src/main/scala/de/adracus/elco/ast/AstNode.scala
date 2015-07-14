@@ -10,14 +10,11 @@ abstract class AstNode(input: Any*) {
 
   def isLeaf = children.isEmpty
 
-  private def toFormattedInner: List[String] = {
+  def toFormattedInner: List[String] = {
     import util.RichIterable._
     if (isLeaf) List(name)
     else {
-      val childLines = children.collect {
-        case a: AstNode => a.toFormattedInner
-        case default => List(default.toString)
-      }
+      val childLines = calculateChildLines(children)
       List(name) ++ childLines.lastMap({ lines =>
         lines.firstMap("├── " + _, "│   " + _)
       }, { lastLines =>
@@ -26,5 +23,32 @@ abstract class AstNode(input: Any*) {
     }
   }
 
+  def calculateChildLines(items: List[Any]): List[List[String]] = {
+    val flattened = flatten(items)
+    flattened.collect {
+      case a: AstNode =>
+        a.toFormattedInner
+
+      case default =>
+        List(default.toString)
+    }
+  }
+
+  private def flatten(list: List[Any]) = {
+    def recurse(acc: List[Any], rest: List[Any]): List[Any] = rest match {
+      case head :: tail => head match {
+        case l: List[Any] => recurse(acc ++ l, tail)
+
+        case default => recurse(acc :+ head, tail)
+      }
+
+      case Nil => acc
+    }
+
+    recurse(List.empty, list)
+  }
+
   def toTreeString = toFormattedInner.mkString("\n")
 }
+
+object Empty extends AstNode

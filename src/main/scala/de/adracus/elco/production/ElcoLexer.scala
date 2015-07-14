@@ -19,6 +19,7 @@ object ElcoLexer extends Lexer {
   keyword("fn")
   keyword("pass")
 
+  symbol(".")
   symbol(",")
   symbol(":")
   symbol(";")

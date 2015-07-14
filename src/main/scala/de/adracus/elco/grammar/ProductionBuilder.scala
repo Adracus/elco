@@ -18,6 +18,8 @@ class ProductionBuilder(initialStatements: Producable*) {
     this
   }
 
+  def empty() = constant(Empty)
+
   def constant(node: AstNode) = Production(statements.toList, Some(_ => node))
 
   def at(idx: Int) = Production(statements.toList, Some(_.apply(idx).asInstanceOf[AstNode]))
@@ -30,17 +32,17 @@ class ProductionBuilder(initialStatements: Producable*) {
 
   def transform(f: Seq[_] => AstNode) = Production(statements.toList, Some(f))
 
-  def on[B1](e1: E1[B1]) = P1Builder(e1)
+  def on1[B1](e1: E1[B1]) = P1Builder(e1)
 
-  def on[B1, B2](e2: E2[B1, B2]) = P2Builder(e2)
+  def on2[B1, B2](e2: E2[B1, B2]) = P2Builder(e2)
 
-  def on[B1, B2, B3](e3: E3[B1, B2, B3]) = P3Builder(e3)
+  def on3[B1, B2, B3](e3: E3[B1, B2, B3]) = P3Builder(e3)
 
-  def on[B1, B2, B3, B4](e4: E4[B1, B2, B3, B4]) = P4Builder(e4)
+  def on4[B1, B2, B3, B4](e4: E4[B1, B2, B3, B4]) = P4Builder(e4)
 
-  def on[B1, B2, B3, B4, B5](e5: E5[B1, B2, B3, B4, B5]) = P5Builder(e5)
+  def on5[B1, B2, B3, B4, B5](e5: E5[B1, B2, B3, B4, B5]) = P5Builder(e5)
 
-  def on[B1, B2, B3, B4, B5, B6](e6: E6[B1, B2, B3, B4, B5, B6]) = P6Builder(e6)
+  def on6[B1, B2, B3, B4, B5, B6](e6: E6[B1, B2, B3, B4, B5, B6]) = P6Builder(e6)
 
   case class P1Builder[B1](e1: E1[B1]) {
     def to(f: B1 => AstNode) =
@@ -48,7 +50,7 @@ class ProductionBuilder(initialStatements: Producable*) {
   }
 
   case class P2Builder[B1, B2](e2: E2[B1, B2]) {
-    def to(e2: E2[B1, B2])(f: (B1, B2) => AstNode) =
+    def to(f: (B1, B2) => AstNode) =
       Production(statements.toList, Some((seq: Seq[_]) => f.tupled(e2(seq))))
   }
 

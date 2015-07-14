@@ -10,22 +10,30 @@ object Extractor {
   type E5[B1, B2, B3, B4, B5] = Seq[_] => (B1, B2, B3, B4, B5)
   type E6[B1, B2, B3, B4, B5, B6] = Seq[_] => (B1, B2, B3, B4, B5, B6)
 
-  implicit def ex1ToE1[_, B1](ex1: Extractor1[_, B1]): E1[B1] = ex1.method
-  implicit def ex2ToE2[_, _, B1, B2](ex2: Extractor2[_, _, B1, B2]): E2[B1, B2] = ex2.method
-  implicit def ex3ToE3[_, _, _, B1, B2, B3](ex3: Extractor3[_, _, _, B1, B2, B3]): E3[B1, B2, B3] = ex3.method
-  implicit def ex4ToE4[_, _, _, _, B1, B2, B3, B4]
+  implicit def ex1ToE1[B1](ex1: Extractor1[_, B1]): E1[B1] = ex1.method
+  implicit def ex2ToE2[B1, B2](ex2: Extractor2[_, _, B1, B2]): E2[B1, B2] = ex2.method
+  implicit def ex3ToE3[B1, B2, B3](ex3: Extractor3[_, _, _, B1, B2, B3]): E3[B1, B2, B3] = ex3.method
+  implicit def ex4ToE4[B1, B2, B3, B4]
     (ex4: Extractor4[_, _, _, _, B1, B2, B3, B4]): E4[B1, B2, B3, B4] = ex4.method
-  implicit def ex5ToE5[_, _, _, _, _, B1, B2, B3, B4, B5]
+  implicit def ex5ToE5[B1, B2, B3, B4, B5]
     (ex5: Extractor5[_, _, _, _, _, B1, B2, B3, B4, B5]): E5[B1, B2, B3, B4, B5] = ex5.method
-  implicit def ex6ToE6[_, _, _, _, _, _, B1, B2, B3, B4, B5, B6]
+  implicit def ex6ToE6[B1, B2, B3, B4, B5, B6]
     (ex6: Extractor6[_, _, _, _, _, _, B1, B2, B3, B4, B5, B6]): E6[B1, B2, B3, B4, B5, B6] = ex6.method
 }
 
-object Ignore
+case class IgnExtractor0[A1, B1](e1: Extractor1[A1, B1]) extends Extractor1[A1, B1] {
+  override def apply(seq: Seq[_]) = e1.apply(seq.tail)
+
+  def extract(a1: A1) = e1.extract(a1)
+}
+
+object Ignore {
+  def %[A1, B1](e1: Extractor1[A1, B1]) = IgnExtractor0(e1)
+}
 
 trait Extractor1[A1, B1] {
   def apply(seq: Seq[_]) = seq match {
-    case Seq(a: A1, rest @ _ *) => (extract(a), rest)
+    case Seq(a, rest @ _ *) => (extract(a.asInstanceOf[A1]), rest)
   }
 
   def %(ignore: Ignore.type) = IgnExtractor1(this)
@@ -39,6 +47,18 @@ trait Extractor1[A1, B1] {
 trait TokenExtractor[A] extends Extractor1[Token, A] {
   def extract(token: Token) = token.value.get.asInstanceOf[A]
 }
+
+case class BaseExtractor[A1, B1](extractor: A1 => B1 = identity[A1] _) extends Extractor1[A1, B1] {
+  def extract(a1: A1) = extractor(a1)
+}
+
+object A {
+  def apply[A1](extractor: A1 => A1 = identity[A1] _) = BaseExtractor[A1, A1](extractor)
+}
+
+object Text extends TokenExtractor[String]
+
+object DoubleNumber extends TokenExtractor[Double]
 
 object IntNumber extends TokenExtractor[Int]
 
@@ -88,8 +108,8 @@ trait BaseExtractor3[A1, A2, A3, B1, B2, B3] {
 
   def extract(a1: A1, a2: A2, a3: A3): (B1, B2, B3)
 
-  def ~(ignore: Ignore.type) = IgnExtractor3(this)
-  def n[A4, B4](e1: Extractor1[A4, B4]) = Extractor4(this, e1)
+  def %(ignore: Ignore.type) = IgnExtractor3(this)
+  def %[A4, B4](e1: Extractor1[A4, B4]) = Extractor4(this, e1)
   def pipe(seq: Seq[_]) = apply(seq)._1
 
   def method = (seq: Seq[_]) => pipe(seq)
@@ -224,8 +244,4 @@ case class IgnExtractor6[A1, A2, A3, A4, A5, A6, B1, B2, B3, B4, B5, B6](e6: Bas
   }
 
   def extract(a1: A1, a2: A2, a3: A3, a4: A4, a5: A5, a6: A6) = e6.extract(a1, a2, a3, a4, a5, a6)
-}
-
-object Test {
-  IntNumber % IntNumber % IntNumber % IntNumber % IntNumber % IntNumber % Ignore
 }

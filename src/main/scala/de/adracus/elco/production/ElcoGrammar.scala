@@ -1,8 +1,8 @@
 package de.adracus.elco.production
 
+import de.adracus.elco._
 import de.adracus.elco.ast._
-import de.adracus.elco.ast_nodes._
-import de.adracus.elco.grammar.Grammar
+import de.adracus.elco.grammar.{Word, NonTerminal, ProductionBuilder, Grammar}
 
 
 /**
@@ -11,65 +11,62 @@ import de.adracus.elco.grammar.Grammar
 object ElcoGrammar extends Grammar {
   import Extractor._
 
-  'L := 'E & 'Separator & 'L on IntNumber to Constant
+  'L := 'E & 'Separator & 'L on2 A[Expression]() % Ignore % A[ExpressionList]() to((e, list) => list :+ e)
 
-  'L := 'E
+  'L := 'E on1 A[Expression]() to ExpressionList.single
 
-  'Separator := ";" | "NEWLINE"
+  'Separator := ";" empty()
+  'Separator := "NEWLINE" empty()
 
-  'ArgList := "(" & ")" | "(" & 'List & ")"
+  'ArgList := "(" & ")" constant ArgList.empty()
+  'ArgList := "(" & 'List & ")" at 1
 
-  'List := "IDENTIFIER" & "," & 'List | "IDENTIFIER"
+  'List := "IDENTIFIER" & "," & 'List on2 Text % Ignore % A[IdentifierList]() to((ident, list) => list :+ ident)
 
-  'Function := "fn" & "IDENTIFIER" & 'ArgList & "{" & 'L & "}"
+  'List := "IDENTIFIER" on1 Text to(ident => IdentifierList(List(ident)))
 
-  'ExpList := 'E | 'E & "," & 'ExpList
+  'Function := "fn" & "IDENTIFIER" & 'ArgList & "{" & 'L & "}" on3 Ignore % Text % A[ArgList]() % Ignore % A[ExpressionList]() to FunctionDefinition
 
-  'E := 'E & "PLUS_OP" & 'E
+  'InvokeList := 'E on1 A[Expression]() to InvokeList.single
+  'InvokeList := 'E & "," & 'InvokeList on2 A[Expression]() % Ignore % A[InvokeList]() to((exp, list) => list :+ exp)
 
-  'E := 'E & "MINUS_OP" & 'E
+  'E := 'Call single()
 
-  'E := 'Call
+  'Call := "IDENTIFIER" & "(" & 'InvokeList & ")" on2 Text % Ignore % A[InvokeList]() to FunctionCall.apply
+  'Call := "IDENTIFIER" & "(" & ")" on1 Text to FunctionCall.zeroArg
 
-  'Call := "IDENTIFIER" & "(" & 'ExpList & ")" | "IDENTIFIER" & "(" & ")"
+  'Conditional := "when" & 'E & 'Wrapped on2 Ignore % A[Expression]() % A[Expression]() to {(cond, ifBody) =>
+    Conditional(cond, ifBody, None)
+  }
 
-  'E := 'E & "COMPARE_OP" & 'E
+  'Conditional := "if" & 'E & 'Wrapped & "else" & 'Wrapped on3
+      Ignore % A[Expression]() % A[Expression]() % Ignore % A[Expression]() to {(cond, ifBody, elseBody) =>
+    Conditional(cond, ifBody, Some(elseBody))
+  }
 
-  'E := 'E & "^" & 'E
-
-  'ClassDef := "class" & "IDENTIFIER" & "{" & 'L & "}"
-
-  'Conditional := "when" & 'E & "{" & 'L & "}"
-
-  'Conditional := "if" & 'E & 'Wrapped & "else" & 'Wrapped
-
-  'Conditional := "if" & 'E & 'Wrapped
+  'Conditional := "if" & 'E & 'Wrapped on2 Ignore % A[Expression]() % A[Expression]() to {(e1, e2) =>
+    Conditional(e1, e2, None)
+  }
 
   'Wrapped := ":" & 'E last()
 
   'Wrapped := "{" & 'L & "}" at 1
 
+  'E := 'E & "." & "IDENTIFIER" on2 A[Expression]() % Ignore % Text to Extraction
+
   'E := 'Conditional single()
 
-  'E := "INTEGER" on IntNumber transform Constant
+  'E := "INTEGER" on1 IntNumber to Constant
 
   'E := "pass" constant Unit
 
   'E := 'Function single()
 
-  'E := 'ClassDef single()
-
   'E := 'Assignment single()
 
-  'Assignment := "IDENTIFIER" & ":=" & 'E on A[Identifier]() % Ignore % A[Expression]() transform {
-    case (identifier, _, expression) => ValAssignment(identifier, expression)
-  }
+  'Assignment := "IDENTIFIER" & "=" & 'E on2 Text % Ignore % A[Expression]() to VarAssignment
 
-  'Assignment := "IDENTIFIER" & "=" & 'E on A[Identifier]() % Ignore % A[Expression]() transform {
-    case (identifier, _, expression) => ValAssignment(identifier, expression)
-  }
-
-  'E := "IDENTIFIER" on Text transform Identifier
+  'E := "IDENTIFIER" on1 Text to VariableAccess
 
   left("PLUS_OP")
   left("MINUS_OP")
