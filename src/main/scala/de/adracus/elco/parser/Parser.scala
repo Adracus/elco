@@ -51,7 +51,7 @@ class Parser(parseTable: ParseTable) {
     }
 
     if (rule.onReduce.isDefined) {
-      val astItem = rule.onReduce.get(buffer.reverse.toSeq)
+      val astItem = rule.onReduce.get(buffer.reverse)
       treeStack.push(astItem)
     }
   }

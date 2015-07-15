@@ -24,6 +24,8 @@ class Stack[A] private (initial: StorageMap[A]) {
 
   def onGetFailed(key: A) = None
 
+  def apply(key: A) = get(key).get
+
   def get(key: A): Option[Any] = {
     def recurse(iterator: Iterator[StorageMap[A]]): Option[Storage] = {
       if (iterator.hasNext) {

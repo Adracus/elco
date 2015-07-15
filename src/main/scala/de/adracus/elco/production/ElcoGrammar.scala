@@ -11,7 +11,7 @@ import de.adracus.elco.grammar.{Word, NonTerminal, ProductionBuilder, Grammar}
 object ElcoGrammar extends Grammar {
   import Extractor._
 
-  'L := 'E & 'Separator & 'L on2 A[Expression]() % Ignore % A[ExpressionList]() to((e, list) => list :+ e)
+  'L := 'L & 'Separator & 'E on2 A[ExpressionList]() % Ignore % A[Expression]() to((list, e) => list :+ e)
 
   'L := 'E on1 A[Expression]() to ExpressionList.single
 
@@ -54,6 +54,8 @@ object ElcoGrammar extends Grammar {
 
   'E := 'E & "." & "IDENTIFIER" on2 A[Expression]() % Ignore % Text to Extraction
 
+  'E := 'E & "(" & 'InvokeList & ")" on2 A[Expression]() % Ignore % A[InvokeList]() to ExpressionCall
+
   'E := 'Conditional single()
 
   'E := "INTEGER" on1 IntNumber to Constant
@@ -65,6 +67,7 @@ object ElcoGrammar extends Grammar {
   'E := 'Assignment single()
 
   'Assignment := "IDENTIFIER" & "=" & 'E on2 Text % Ignore % A[Expression]() to VarAssignment
+  'Assignment := "IDENTIFIER" & ":=" & 'E on2 Text % Ignore % A[Expression]() to ValAssignment
 
   'E := "IDENTIFIER" on1 Text to VariableAccess
 

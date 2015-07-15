@@ -19,12 +19,18 @@ case class Constant(value: Int) extends Expression(value)
 
 case class VariableAccess(identifier: String) extends Expression(identifier)
 
-case class IdentifierList(identifiers: List[String]) extends Expression(identifiers) {
+case class IdentifierList(identifiers: List[String]) extends Expression(identifiers:_*) {
   def :+(identifier: String) = IdentifierList(identifiers :+ identifier)
 }
 
-case class FunctionCall(identifier: String, invokeList: InvokeList)
+abstract class BaseCall(identifier: String, invokeList: InvokeList)
   extends Expression(identifier, invokeList)
+
+case class FunctionCall(identifier: String, invokeList: InvokeList)
+  extends BaseCall(identifier, invokeList)
+
+case class ExpressionCall(expression: Expression, invokeList: InvokeList)
+  extends BaseCall("call", invokeList)
 
 object FunctionCall {
   def zeroArg(identifier: String) = FunctionCall(identifier, InvokeList.empty())
@@ -50,9 +56,9 @@ case class VarAssignment(identifier: String, expression: Expression)
 case class Conditional(condition: Expression, ifBody: Expression, elseBody: Option[Expression])
   extends Expression(condition, ifBody, elseBody)
 
-case class ArgList(identifiers: List[String]) extends Expression(identifiers)
+case class ArgList(identifiers: List[String]) extends Expression(identifiers:_*)
 
-case class InvokeList(expressions: List[Expression]) extends Expression(expressions) {
+case class InvokeList(expressions: List[Expression]) extends Expression(expressions:_*) {
   def :+(expression: Expression) = InvokeList(expressions :+ expression)
 }
 
