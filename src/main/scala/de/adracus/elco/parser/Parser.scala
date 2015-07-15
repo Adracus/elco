@@ -1,5 +1,6 @@
 package de.adracus.elco.parser
 
+import de.adracus.elco.ast.AstNode
 import de.adracus.elco.grammar._
 import de.adracus.elco.lexer.core.{Token, TokenStream}
 
@@ -30,7 +31,10 @@ class Parser(parseTable: ParseTable) {
     if (finished) {
       val result = treeStack.pop()
       reset()
-      result
+      if (!result.isInstanceOf[AstNode]) {
+        throw new Exception(s"Illegal result $result")
+      }
+      result.asInstanceOf[AstNode]
     } else {
       reset()
       throw UnexpectedException(
