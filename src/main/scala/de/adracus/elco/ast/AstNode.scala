@@ -14,38 +14,19 @@ abstract class AstNode(input: Any*) {
     import util.RichIterable._
     if (isLeaf) List(name)
     else {
-      val childLines = calculateChildLines(children)
+      val childLines = children.collect {
+        case a: AstNode =>
+          a.toFormattedInner
+
+        case default =>
+          List(default.toString)
+      }
       List(name) ++ childLines.lastMap({ lines =>
         lines.firstMap("├── " + _, "│   " + _)
       }, { lastLines =>
         lastLines.firstMap("└── " + _, "    " + _)
       }).flatten
     }
-  }
-
-  def calculateChildLines(items: List[Any]): List[List[String]] = {
-    val flattened = flatten(items)
-    flattened.collect {
-      case a: AstNode =>
-        a.toFormattedInner
-
-      case default =>
-        List(default.toString)
-    }
-  }
-
-  private def flatten(list: List[Any]) = {
-    def recurse(acc: List[Any], rest: List[Any]): List[Any] = rest match {
-      case head :: tail => head match {
-        case l: List[Any] => recurse(acc ++ l, tail)
-
-        case default => recurse(acc :+ head, tail)
-      }
-
-      case Nil => acc
-    }
-
-    recurse(List.empty, list)
   }
 
   def toTreeString = toFormattedInner.mkString("\n")

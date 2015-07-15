@@ -1,13 +1,13 @@
-package de.adracus.elco
+package de.adracus.elco.production
 
 import de.adracus.elco.ast.AstNode
 
 /**
  * Created by axel on 08/07/15.
  */
-abstract class Expression(input: Any*) extends AstNode(input)
+abstract class Expression(input: Any*) extends AstNode(input:_*)
 
-case class ExpressionList(expressions: List[Expression]) extends AstNode(expressions) {
+case class ExpressionList(expressions: List[Expression]) extends AstNode(expressions:_*) {
   def :+(expression: Expression) = ExpressionList(expressions :+ expression)
 }
 

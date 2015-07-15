@@ -1,6 +1,5 @@
 package de.adracus.elco.production
 
-import de.adracus.elco.Constant
 import de.adracus.elco.ast.AstNode
 import de.adracus.elco.parser.Parser
 
