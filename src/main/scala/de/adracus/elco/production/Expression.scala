@@ -23,6 +23,10 @@ case class IdentifierList(identifiers: List[String]) extends Expression(identifi
   def :+(identifier: String) = IdentifierList(identifiers :+ identifier)
 }
 
+object IdentifierList {
+  def empty() = IdentifierList(List.empty)
+}
+
 abstract class BaseCall(identifier: String, invokeList: InvokeList)
   extends Expression(identifier, invokeList)
 
@@ -36,16 +40,18 @@ object FunctionCall {
   def zeroArg(identifier: String) = FunctionCall(identifier, InvokeList.empty())
 }
 
-case class FunctionDefinition(identifier: String, argList: ArgList, body: ExpressionList)
-  extends Expression(identifier, argList, body)
+case class FunctionDefinition(identifier: String, identifiers: IdentifierList, body: ExpressionList)
+  extends Expression(identifier, identifiers, body)
 
 case class Extraction(expression: Expression, identifier: String)
   extends Expression(expression, identifier)
 
 abstract class Assignment(
     identifier: String,
-    expression: Expression)
-  extends Expression(identifier, expression)
+    expr: Expression)
+  extends Expression(identifier, expr) {
+  def expression: Expression
+}
 
 case class ValAssignment(identifier: String, expression: Expression)
   extends Assignment(identifier, expression)
@@ -56,8 +62,6 @@ case class VarAssignment(identifier: String, expression: Expression)
 case class Conditional(condition: Expression, ifBody: Expression, elseBody: Option[Expression])
   extends Expression(condition, ifBody, elseBody)
 
-case class ArgList(identifiers: List[String]) extends Expression(identifiers:_*)
-
 case class InvokeList(expressions: List[Expression]) extends Expression(expressions:_*) {
   def :+(expression: Expression) = InvokeList(expressions :+ expression)
 }
@@ -65,10 +69,6 @@ case class InvokeList(expressions: List[Expression]) extends Expression(expressi
 object InvokeList {
   def single(expression: Expression) = InvokeList(List(expression))
   def empty() = InvokeList(List())
-}
-
-object ArgList {
-  def empty() = ArgList(List.empty)
 }
 
 object Unit extends Expression

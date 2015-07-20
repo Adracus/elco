@@ -11,7 +11,7 @@ object Test extends App {
   val lexer = ElcoLexer
   val evaluator = new ElcoEvaluator
 
-  val ast = parser.parse(lexer.lex("a := 5;"))
+  val ast = parser.parse(lexer.lex("fn bla(a, b) { d := a; c := b}; bla(1, 2)"))
   println(ast.toTreeString)
 
   println(evaluator.evaluate(ast))

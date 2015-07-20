@@ -18,14 +18,14 @@ object ElcoGrammar extends Grammar {
   'Separator := ";" empty()
   'Separator := "NEWLINE" empty()
 
-  'ArgList := "(" & ")" constant ArgList.empty()
-  'ArgList := "(" & 'List & ")" at 1
+  'IdentifierList := "(" & ")" constant IdentifierList.empty()
+  'IdentifierList := "(" & 'List & ")" at 1
 
   'List := "IDENTIFIER" & "," & 'List on2 Text % Ignore % A[IdentifierList]() to((ident, list) => list :+ ident)
 
   'List := "IDENTIFIER" on1 Text to(ident => IdentifierList(List(ident)))
 
-  'Function := "fn" & "IDENTIFIER" & 'ArgList & "{" & 'L & "}" on3 Ignore % Text % A[ArgList]() % Ignore % A[ExpressionList]() to FunctionDefinition
+  'Function := "fn" & "IDENTIFIER" & 'IdentifierList & "{" & 'L & "}" on3 Ignore % Text % A[IdentifierList]() % Ignore % A[ExpressionList]() to FunctionDefinition
 
   'InvokeList := 'E on1 A[Expression]() to InvokeList.single
   'InvokeList := 'E & "," & 'InvokeList on2 A[Expression]() % Ignore % A[InvokeList]() to((exp, list) => list :+ exp)

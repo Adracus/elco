@@ -12,5 +12,7 @@ trait Evaluator[A] {
 
   implicit class EvaluatableNode(val astNode: AstNode) {
     def evaluate() = Evaluator.this.evaluate(astNode)
+
+    def evaluateFn = evaluate _
   }
 }
