@@ -1,6 +1,7 @@
 package de.adracus.elco.production
 
 import de.adracus.elco.ast.AstNode
+import de.adracus.elco.base.IntegerInstance
 
 /**
  * Created by axel on 08/07/15.
@@ -15,7 +16,11 @@ object ExpressionList {
   def single(expression: Expression) = ExpressionList(List(expression))
 }
 
-case class Constant(value: Int) extends Expression(value)
+case class Constant(value: IntegerInstance) extends Expression(value)
+
+object Constant {
+  def apply(i: Int): Constant = new Constant(de.adracus.elco.base.Integer.create(i))
+}
 
 case class VariableAccess(identifier: String) extends Expression(identifier)
 

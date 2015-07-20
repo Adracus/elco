@@ -6,7 +6,24 @@ package de.adracus.elco.base
 trait BaseInstance {
   val properties: Map[String, BaseInstance]
   val clazz: BaseClass[_ <: BaseInstance]
+
+  def get(name: String) = properties.get(name)
+
+  def apply(name: String) = properties(name)
 }
 
-case class Instance(clazz: BaseClass[_ <: BaseInstance], properties: Map[String, BaseInstance])
-  extends BaseInstance
+class Instance(val clazz: BaseClass[_ <: BaseInstance], props: BaseInstance => Map[String, BaseInstance])
+  extends BaseInstance {
+
+  lazy val properties = props(this)
+}
+
+object Instance {
+  def apply(clazz: BaseClass[_ <: BaseInstance], props: BaseInstance => Map[String, BaseInstance]) =
+    new Instance(clazz, props)
+
+  def apply(clazz: BaseClass[_ <: BaseInstance], props: => Map[String, BaseInstance]) =
+    new Instance(clazz, (_) => props)
+
+  def unapply(instance: Instance) = Some((instance.clazz, instance.properties))
+}

@@ -1,5 +1,6 @@
 package de.adracus.elco.production
 
+import de.adracus.elco.base.IntegerInstance
 import de.adracus.elco.parser.Parser
 
 /**
@@ -11,8 +12,8 @@ object Test extends App {
   val lexer = ElcoLexer
   val evaluator = new ElcoEvaluator
 
-  val ast = parser.parse(lexer.lex("fn bla(a, b) { d := a; c := b}; bla(1, 2)"))
+  val ast = parser.parse(lexer.lex("a := 1.plus; a(2); a(10)"))
   println(ast.toTreeString)
 
-  println(evaluator.evaluate(ast))
+  println(evaluator.evaluate(ast).asInstanceOf[IntegerInstance].value)
 }

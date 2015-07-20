@@ -58,7 +58,7 @@ object ElcoGrammar extends Grammar {
 
   'E := 'Conditional single()
 
-  'E := "INTEGER" on1 IntNumber to Constant
+  'E := "INTEGER" on1 IntNumber to Constant.apply
 
   'E := "pass" constant Unit
 

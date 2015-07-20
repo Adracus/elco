@@ -1,7 +1,7 @@
 package de.adracus.elco.production
 
 import de.adracus.elco.ast.AstNode
-import de.adracus.elco.base.Method
+import de.adracus.elco.base.{BaseInstance, MethodInstance, Instance, Method}
 import de.adracus.elco.evaluate.Evaluator
 
 /**
@@ -19,9 +19,26 @@ class ElcoEvaluator extends Evaluator[String] {
       stack.const(name, method)
       method
 
+    case Extraction(expression, name) => expression.evaluate().asInstanceOf[BaseInstance](name)
+
+    case ExpressionCall(expr, invokeList) =>
+      val evaluated = expr.evaluate().asInstanceOf[BaseInstance]
+      val option = evaluated.get("call")
+      option match {
+        case Some(MethodInstance(method)) => method(invokeList.expressions.map(_.evaluate()))
+
+        case _ => throw new Exception("No method defined for apply")
+      }
+
+
     case FunctionCall(name, invokeList) =>
-      val fn = stack(name).asInstanceOf[List[Any] => Any]
-      fn(invokeList.expressions.map(_.evaluate()))
+      val inst = stack(name).asInstanceOf[BaseInstance]
+      val option = inst.get("call")
+      option match {
+        case Some(MethodInstance(method)) => method(invokeList.expressions.map(_.evaluate()))
+
+        case _ => throw new Exception("No method defined for apply")
+      }
 
     case a: Assignment =>
       val value = a.expression.evaluate()
