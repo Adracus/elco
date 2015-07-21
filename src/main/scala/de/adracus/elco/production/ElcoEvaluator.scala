@@ -12,14 +12,15 @@ class ElcoEvaluator extends Evaluator[String] {
     case ExpressionList(expressions) =>
       expressions.map(_.evaluate()).last
 
-    case Constant(value) => value
+    case Constant(value) => de.adracus.elco.base.Integer.create(value)
 
     case FunctionDefinition(name, identifiers, body) =>
       val method = Method.createMethod(this.stack, body.evaluateFn, identifiers.identifiers)
       stack.const(name, method)
       method
 
-    case Extraction(expression, name) => expression.evaluate().asInstanceOf[BaseInstance](name)
+    case Extraction(expression, name) =>
+      expression.evaluate().asInstanceOf[BaseInstance](name)
 
     case ExpressionCall(expr, invokeList) =>
       val evaluated = expr.evaluate().asInstanceOf[BaseInstance]

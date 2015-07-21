@@ -54,6 +54,11 @@ object ElcoGrammar extends Grammar {
 
   'E := 'E & "." & "IDENTIFIER" on2 A[Expression]() % Ignore % Text to Extraction
 
+  'E := 'E & "IDENTIFIER" & 'E on3 A[Expression]() % Text % A[Expression]() to {(e1, name, e2) =>
+    val fn = Extraction(e1, name)
+    ExpressionCall(fn, InvokeList(List(e2)))
+  }
+
   'E := 'E & "(" & 'InvokeList & ")" on2 A[Expression]() % Ignore % A[InvokeList]() to ExpressionCall
 
   'E := 'Conditional single()

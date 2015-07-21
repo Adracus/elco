@@ -12,7 +12,7 @@ object Test extends App {
   val lexer = ElcoLexer
   val evaluator = new ElcoEvaluator
 
-  val ast = parser.parse(lexer.lex("a := 1.plus; a(2); a(10)"))
+  val ast = parser.parse(lexer.lex("1 plus 2 plus 3 plus 4"))
   println(ast.toTreeString)
 
   println(evaluator.evaluate(ast).asInstanceOf[IntegerInstance].value)

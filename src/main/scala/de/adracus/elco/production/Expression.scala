@@ -16,11 +16,7 @@ object ExpressionList {
   def single(expression: Expression) = ExpressionList(List(expression))
 }
 
-case class Constant(value: IntegerInstance) extends Expression(value)
-
-object Constant {
-  def apply(i: Int): Constant = new Constant(de.adracus.elco.base.Integer.create(i))
-}
+case class Constant(value: Int) extends Expression(value)
 
 case class VariableAccess(identifier: String) extends Expression(identifier)
 
