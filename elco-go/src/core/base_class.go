@@ -1,39 +1,39 @@
 package core
 
-import "reflect"
-
 type BaseClass interface {
-	name() string
-	class() *Type
-	properties() *Properties
-	instanceProperties() *Properties
+	Name() string
+	Class() *Type
+	Props() *Properties
+	InstanceProps() *Properties
 }
 
 type UserClass struct {
-	name               string
-	class              *Type
-	properties         *Properties
-	instanceProperties *Properties
+	name          string
+	class         *Type
+	props         *Properties
+	instanceProps *Properties
 }
 
-var Method = UserClass{
-	name:               "Method",
-	properties:         nil,
-	instanceProperties: nil,
+func (class UserClass) Name() string {
+	return class.name
 }
 
-type MethodInstance struct {
-	_properties *Properties
-	_fn         *interface{}
+func (class UserClass) Class() *Type {
+	return class.class
 }
 
-func isFunc(fn *interface{}) bool {
-	return reflect.TypeOf(fn).Kind() == reflect.Func
+func (class UserClass) Props() *Properties {
+	return class.props
 }
 
-func NewMethodInstance(fn *interface{}) *MethodInstance {
-	if !isFunc(fn) {
-		panic("No valid function")
-	}
-	return &MethodInstance{Method.instanceProperties, fn}
+func (class UserClass) InstanceProps() *Properties {
+	return class.instanceProps
+}
+
+func NewUserClass(
+	name string,
+	props *Properties,
+	instanceProps *Properties) *UserClass {
+
+	return &UserClass{name, SimpleType(Class), props, instanceProps}
 }

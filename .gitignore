@@ -81,3 +81,5 @@ project/boot/
 .cache
 
 pkg/
+
+*.swp # Ignore these nasty swap files

@@ -1,34 +1,34 @@
 package core
 
 type ClassClass struct {
-	_name               string
-	_class              *Type
-	_properties         *Properties
-	_instanceProperties *Properties
+	name          string
+	class         *Type
+	props         *Properties
+	instanceProps *Properties
 }
 
-func (c ClassClass) name() string {
-	return c._name
+func (c ClassClass) Name() string {
+	return c.name
 }
 
-func (c ClassClass) class() *Type {
-	return c._class
+func (c ClassClass) Class() *Type {
+	return c.class
 }
 
-func (c ClassClass) properties() *Properties {
-	return c._properties
+func (c ClassClass) Props() *Properties {
+	return c.props
 }
 
-func (c ClassClass) instanceProperties() *Properties {
-	return c._instanceProperties
+func (c ClassClass) InstanceProps() *Properties {
+	return c.instanceProps
 }
 
-var Class ClassClass
+var Class *ClassClass
 
 func init() {
-	Class = ClassClass{
-		_name:               "Class",
-		_properties:         nil,
-		_instanceProperties: nil,
+	Class = &ClassClass{
+		name:          "Class",
+		props:         nil,
+		instanceProps: nil,
 	}
 }
