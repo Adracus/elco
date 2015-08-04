@@ -1,39 +1,34 @@
 package core
 
 type Properties struct {
-	public    map[string]*Instance
-	protected map[string]*Instance
-	private   map[string]*Instance
+	values map[string]map[string]Instance
 }
 
 func NewProperties() *Properties {
-	public := make(map[string]*Instance)
-	protected := make(map[string]*Instance)
-	private := make(map[string]*Instance)
-	return &Properties{public, protected, private}
+	m := make(map[string]map[string]Instance)
+	m["public"] = make(map[string]Instance)
+	m["protected"] = make(map[string]Instance)
+	m["private"] = make(map[string]Instance)
+	return &Properties{m}
 }
 
-func getMap(props *Properties, level string) map[string]*Instance {
-	var m map[string]*Instance
-	switch level {
-	case "private":
-		m = props.private
-	case "protected":
-		m = props.protected
-	case "public":
-		m = props.public
-	default:
-		panic("Invalid access level " + level)
+func (this *Properties) Merge(that *Properties) {
+	for level, otherMap := range that.values {
+		thisMap := this.values[level]
+		for k, v := range otherMap {
+			thisMap[k] = v
+		}
 	}
-	return m
 }
 
-func Get(props *Properties, level string, key string) *Instance {
-	m := getMap(props, level)
-	return m[key]
+func (props *Properties) Get(level string, key string) Instance {
+	return props.values[level][key]
 }
 
-func Set(props *Properties, level string, key string, value *Instance) {
-	m := getMap(props, level)
-	m[key] = value
+func (props *Properties) Set(level string, key string, value Instance) {
+	props.values[level][key] = value
+}
+
+func (props *Properties) Delete(level string, key string) {
+	delete(props.values[level], key)
 }

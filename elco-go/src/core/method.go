@@ -2,7 +2,7 @@ package core
 
 import "reflect"
 
-var Method = NewUserClass("Method", NewProperties(), NewProperties())
+var Method = NewUserClass("Method", nil, NewProperties(), NewProperties())
 
 type MethodInstance struct {
 	class *Type

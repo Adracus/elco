@@ -3,8 +3,13 @@ package core
 type ClassClass struct {
 	name          string
 	class         *Type
+	super         BaseClass
 	props         *Properties
 	instanceProps *Properties
+}
+
+func (c ClassClass) Super() BaseClass {
+	return c.super
 }
 
 func (c ClassClass) Name() string {

@@ -3,37 +3,37 @@ package core
 type BaseClass interface {
 	Name() string
 	Class() *Type
+	Super() BaseClass
 	Props() *Properties
 	InstanceProps() *Properties
 }
 
-type UserClass struct {
-	name          string
-	class         *Type
-	props         *Properties
-	instanceProps *Properties
+func GetProp(class BaseClass, level, key string) {
+	props := class.Props()
+	props.Get(level, key)
 }
 
-func (class UserClass) Name() string {
-	return class.name
+func AddProp(class BaseClass, level, key string, inst Instance) {
+	props := class.Props()
+	props.Set(level, key, inst)
 }
 
-func (class UserClass) Class() *Type {
-	return class.class
+func DeleteProp(class BaseClass, level, key string) {
+	props := class.Props()
+	props.Delete(level, key)
 }
 
-func (class UserClass) Props() *Properties {
-	return class.props
+func GetInstanceProp(class BaseClass, level, key string) {
+	props := class.InstanceProps()
+	props.Get(level, key)
 }
 
-func (class UserClass) InstanceProps() *Properties {
-	return class.instanceProps
+func AddInstanceProp(class BaseClass, level, key string, inst Instance) {
+	props := class.InstanceProps()
+	props.Set(level, key, inst)
 }
 
-func NewUserClass(
-	name string,
-	props *Properties,
-	instanceProps *Properties) *UserClass {
-
-	return &UserClass{name, SimpleType(Class), props, instanceProps}
+func DeleteInstanceProp(class BaseClass, level, key string) {
+	props := class.InstanceProps()
+	props.Delete(level, key)
 }

@@ -82,4 +82,5 @@ project/boot/
 
 pkg/
 
-*.swp # Ignore these nasty swap files
+*.swp
+
