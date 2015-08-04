@@ -1,14 +1,14 @@
 package core
 
 type Properties struct {
-	values map[string]map[string]Instance
+	values map[string]map[string]BaseInstance
 }
 
 func NewProperties() *Properties {
-	m := make(map[string]map[string]Instance)
-	m["public"] = make(map[string]Instance)
-	m["protected"] = make(map[string]Instance)
-	m["private"] = make(map[string]Instance)
+	m := make(map[string]map[string]BaseInstance)
+	m["public"] = make(map[string]BaseInstance)
+	m["protected"] = make(map[string]BaseInstance)
+	m["private"] = make(map[string]BaseInstance)
 	return &Properties{m}
 }
 
@@ -21,15 +21,15 @@ func (this *Properties) Merge(that *Properties) {
 	}
 }
 
-func (props *Properties) Get(level string, key string) Instance {
+func (props *Properties) Get(level string, key string) BaseInstance {
 	return props.values[level][key]
 }
 
-func (props *Properties) Set(level string, key string, value Instance) {
+func (props *Properties) Set(level string, key string, value BaseInstance) {
 	props.values[level][key] = value
 }
 
-func (props *Properties) SetAll(level string, m map[string]Instance) {
+func (props *Properties) SetAll(level string, m map[string]BaseInstance) {
 	thisMap := props.values[level]
 	for k, v := range m {
 		thisMap[k] = v

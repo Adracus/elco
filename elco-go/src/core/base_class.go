@@ -13,7 +13,7 @@ func GetProp(class BaseClass, level, key string) {
 	props.Get(level, key)
 }
 
-func AddProp(class BaseClass, level, key string, inst Instance) {
+func AddProp(class BaseClass, level, key string, inst BaseInstance) {
 	props := class.Props()
 	props.Set(level, key, inst)
 }
@@ -28,7 +28,7 @@ func GetInstanceProp(class BaseClass, level, key string) {
 	props.Get(level, key)
 }
 
-func AddInstanceProp(class BaseClass, level, key string, inst Instance) {
+func AddInstanceProp(class BaseClass, level, key string, inst BaseInstance) {
 	props := class.InstanceProps()
 	props.Set(level, key, inst)
 }

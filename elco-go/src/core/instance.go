@@ -1,6 +1,6 @@
 package core
 
-type Instance interface {
+type BaseInstance interface {
 	Props() *Properties
 	Class() *Type
 }

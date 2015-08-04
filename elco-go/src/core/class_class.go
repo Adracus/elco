@@ -37,7 +37,7 @@ func init() {
 		instanceProps: nil,
 	}
 
-	Class.Props().SetAll("public", map[string]Instance{
+	Class.Props().SetAll("public", map[string]BaseInstance{
 		"create": NewMethodInstance(create),
 	})
 }
