@@ -38,9 +38,14 @@ func init() {
 	}
 
 	Class.Props().SetAll("public", map[string]BaseInstance{
-		"create": NewMethodInstance(create),
+		"create": NewMethodInstance(func(name string) *UserClass {
+			return &UserClass{
+				name:          name,
+				class:         SimpleType(Class),
+				super:         Class,
+				props:         Class.Props().Inheritable(),
+				instanceProps: NewProperties(),
+			}
+		}),
 	})
-}
-
-func create() {
 }

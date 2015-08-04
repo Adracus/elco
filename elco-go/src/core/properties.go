@@ -21,6 +21,13 @@ func (this *Properties) Merge(that *Properties) {
 	}
 }
 
+func (props *Properties) Inheritable() *Properties {
+	newProps := NewProperties()
+	newProps.SetAll("public", props.values["public"])
+	newProps.SetAll("protected", props.values["protected"])
+	return newProps
+}
+
 func (props *Properties) Get(level string, key string) BaseInstance {
 	return props.values[level][key]
 }
