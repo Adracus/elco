@@ -5,18 +5,25 @@ import "reflect"
 var Method = NewUserClass("Method", nil, NewProperties(), NewProperties())
 
 type MethodInstance struct {
-	class *Type
 	props *Properties
-	fn    *interface{}
+	fn    interface{}
+}
+
+func (method *MethodInstance) Class() *Type {
+	return SimpleType(Method)
+}
+
+func (method *MethodInstance) Props() *Properties {
+	return nil
 }
 
 func isFunc(fn interface{}) bool {
 	return reflect.TypeOf(fn).Kind() == reflect.Func
 }
 
-func NewMethodInstance(fn *interface{}) *MethodInstance {
+func NewMethodInstance(fn interface{}) *MethodInstance {
 	if !isFunc(fn) {
 		panic("Illegal argument: fn is no function")
 	}
-	return &MethodInstance{SimpleType(Method), Method.Props(), fn}
+	return &MethodInstance{Method.Props(), fn}
 }

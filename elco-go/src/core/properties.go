@@ -29,6 +29,13 @@ func (props *Properties) Set(level string, key string, value Instance) {
 	props.values[level][key] = value
 }
 
+func (props *Properties) SetAll(level string, m map[string]Instance) {
+	thisMap := props.values[level]
+	for k, v := range m {
+		thisMap[k] = v
+	}
+}
+
 func (props *Properties) Delete(level string, key string) {
 	delete(props.values[level], key)
 }
