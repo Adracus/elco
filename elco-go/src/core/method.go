@@ -1,29 +1,43 @@
 package core
 
-import "reflect"
-
 var Method = NewUserClass("Method", nil, NewProperties(), NewProperties())
 
 type MethodInstance struct {
 	props *Properties
-	fn    interface{}
+	fn    *Function
 }
 
+var methodClass = SimpleType(Method)
+
 func (method *MethodInstance) Class() *Type {
-	return SimpleType(Method)
+	return methodClass
 }
 
 func (method *MethodInstance) Props() *Properties {
-	return nil
+	return method.props
 }
 
-func isFunc(fn interface{}) bool {
-	return reflect.TypeOf(fn).Kind() == reflect.Func
+func NewMethodInstance(fn func(...BaseInstance) BaseInstance) *MethodInstance {
+	return &MethodInstance{Method.Props(), &Function{fn}}
 }
 
-func NewMethodInstance(fn interface{}) *MethodInstance {
-	if !isFunc(fn) {
-		panic("Illegal argument: fn is no function")
-	}
-	return &MethodInstance{Method.Props(), fn}
+var UnboundMethod = NewUserClass("UnboundMethod", nil, NewProperties(), NewProperties())
+
+type UnboundMethodInstance struct {
+	props *Properties
+	fn    *UnboundFunction
+}
+
+var unboundMethodClass = SimpleType(UnboundMethod)
+
+func (method *UnboundMethodInstance) Class() *Type {
+	return unboundMethodClass
+}
+
+func (method *UnboundMethodInstance) Props() *Properties {
+	return method.props
+}
+
+func NewUnboundMethodInstance(fn func(BaseInstance, ...BaseInstance) BaseInstance) *UnboundMethodInstance {
+	return &UnboundMethodInstance{UnboundMethod.Props(), &UnboundFunction{fn}}
 }

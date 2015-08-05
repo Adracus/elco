@@ -1,14 +1,14 @@
 package core
 
 type UserClass struct {
-	name          string
+	name          *StringInstance
 	class         *Type
 	super         BaseClass
 	props         *Properties
 	instanceProps *Properties
 }
 
-func (class UserClass) Name() string {
+func (class UserClass) Name() *StringInstance {
 	return class.name
 }
 
@@ -34,5 +34,5 @@ func NewUserClass(
 	props *Properties,
 	instanceProps *Properties) *UserClass {
 
-	return &UserClass{name, SimpleType(Class), super, props, instanceProps}
+	return &UserClass{NewStringInstance(name), SimpleType(Class), super, props, instanceProps}
 }

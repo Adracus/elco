@@ -1,7 +1,7 @@
 package core
 
 type BaseClass interface {
-	Name() string
+	Name() *StringInstance
 	Class() *Type
 	Super() BaseClass
 	Props() *Properties
