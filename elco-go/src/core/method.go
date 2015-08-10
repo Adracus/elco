@@ -17,6 +17,10 @@ func (method *MethodInstance) Props() *Properties {
 	return method.props
 }
 
+func (method *MethodInstance) HashCode() *IntInstance {
+	return NewIntInstance(0) // TODO: Implement hashcode
+}
+
 func NewMethodInstance(fn func(...BaseInstance) BaseInstance) *MethodInstance {
 	return &MethodInstance{Method.Props(), &Function{fn}}
 }
@@ -36,6 +40,10 @@ func (method *UnboundMethodInstance) Class() *Type {
 
 func (method *UnboundMethodInstance) Props() *Properties {
 	return method.props
+}
+
+func (method *UnboundMethodInstance) HashCode() *IntInstance {
+	return NewIntInstance(0) // TODO: Implement hashcode
 }
 
 func NewUnboundMethodInstance(fn func(BaseInstance, ...BaseInstance) BaseInstance) *UnboundMethodInstance {

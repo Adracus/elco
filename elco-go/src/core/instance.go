@@ -3,6 +3,7 @@ package core
 type BaseInstance interface {
 	Props() *Properties
 	Class() *Type
+	HashCode() *IntInstance
 }
 
 type Instance struct {

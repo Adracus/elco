@@ -25,6 +25,10 @@ func (c *ClassClass) Props() *Properties {
 	return c.props
 }
 
+func (c *ClassClass) HashCode() *IntInstance {
+	return c.Name().HashCode()
+}
+
 func (c *ClassClass) InstanceProps() *Properties {
 	return c.instanceProps
 }
@@ -51,8 +55,7 @@ func init() {
 
 	subclassMethod := NewUnboundMethodInstance(Subclass)
 
-	Class.InstanceProps().SetAll("public", map[string]BaseInstance{
-		"create":   subclassMethod,
-		"subclass": subclassMethod,
-	})
+	instProps := Class.InstanceProps()
+	instProps.Set("public", "create", subclassMethod)
+	instProps.Set("public", "subclass", subclassMethod)
 }

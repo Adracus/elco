@@ -8,24 +8,28 @@ type UserClass struct {
 	instanceProps *Properties
 }
 
-func (class UserClass) Name() *StringInstance {
+func (class *UserClass) Name() *StringInstance {
 	return class.name
 }
 
-func (class UserClass) Super() BaseClass {
+func (class *UserClass) Super() BaseClass {
 	return class.super
 }
 
-func (class UserClass) Class() *Type {
+func (class *UserClass) Class() *Type {
 	return class.class
 }
 
-func (class UserClass) Props() *Properties {
+func (class *UserClass) Props() *Properties {
 	return class.props
 }
 
-func (class UserClass) InstanceProps() *Properties {
+func (class *UserClass) InstanceProps() *Properties {
 	return class.instanceProps
+}
+
+func (class *UserClass) HashCode() *IntInstance {
+	return class.name.HashCode()
 }
 
 func NewUserClass(
