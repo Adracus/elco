@@ -7,6 +7,10 @@ type MethodInstance struct {
 	fn    *Function
 }
 
+func (method *MethodInstance) Apply(args ...BaseInstance) BaseInstance {
+	return method.fn.Apply(args...)
+}
+
 var methodClass = SimpleType(Method)
 
 func (method *MethodInstance) Class() *Type {

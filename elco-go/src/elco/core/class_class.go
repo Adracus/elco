@@ -1,10 +1,10 @@
 package core
 
 type ClassClass struct {
-	class         *Type
-	super         BaseClass
-	props         *Properties
-	instanceProps *Properties
+	class *Type
+	super BaseClass
+	*LazyProperties
+	instanceProps *LazyProperties
 }
 
 var name = NewStringInstance("Class")
@@ -21,16 +21,12 @@ func (c *ClassClass) Class() *Type {
 	return c.class
 }
 
-func (c *ClassClass) Props() *Properties {
-	return c.props
-}
-
 func (c *ClassClass) HashCode() *IntInstance {
 	return c.Name().HashCode()
 }
 
 func (c *ClassClass) InstanceProps() *Properties {
-	return c.instanceProps
+	return c.instanceProps.Props()
 }
 
 var Class *ClassClass
@@ -48,10 +44,7 @@ func Subclass(class BaseInstance, name ...BaseInstance) BaseInstance {
 }
 
 func init() {
-	Class = &ClassClass{
-		props:         nil,
-		instanceProps: nil,
-	}
+	Class = &ClassClass{nil, nil, NewDefaultLazyProperties(), NewDefaultLazyProperties()}
 
 	subclassMethod := NewUnboundMethodInstance(Subclass)
 

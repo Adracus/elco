@@ -4,7 +4,7 @@ import "math"
 
 type StringInstance struct {
 	value string
-	props *Properties
+	*LazyProperties
 }
 
 func (str *StringInstance) HashCode() *IntInstance {
@@ -19,10 +19,6 @@ func (str *StringInstance) Class() *Type {
 	return stringType
 }
 
-func (str *StringInstance) Props() *Properties {
-	return str.props
-}
-
 var stringType = SimpleType(String)
 var String *UserClass
 
@@ -31,5 +27,5 @@ func init() {
 }
 
 func NewStringInstance(value string) *StringInstance {
-	return &StringInstance{value, NewProperties()}
+	return &StringInstance{value, NewDefaultLazyProperties()}
 }

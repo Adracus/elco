@@ -2,19 +2,19 @@ package core
 
 type IntInstance struct {
 	value int
-	props *Properties
+	*LazyProperties
 }
 
 func (int *IntInstance) Class() *Type {
 	return intType
 }
 
-func (int *IntInstance) HashCode() *IntInstance {
-	return int
+func (this *IntInstance) Plus(that *IntInstance) *IntInstance {
+	return NewIntInstance(this.value + that.value)
 }
 
-func (int *IntInstance) Props() *Properties {
-	return int.props
+func (int *IntInstance) HashCode() *IntInstance {
+	return int
 }
 
 var intType = SimpleType(Int)
@@ -25,5 +25,5 @@ func init() {
 }
 
 func NewIntInstance(value int) *IntInstance {
-	return &IntInstance{value, NewProperties()}
+	return &IntInstance{value, NewDefaultLazyProperties()}
 }
