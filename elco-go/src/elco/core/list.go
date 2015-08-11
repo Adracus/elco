@@ -7,10 +7,15 @@ var El = &EmptyListInstance{NewDefaultLazyProperties()}
 type BaseListInstance interface {
 	Head() BaseInstance
 	Tail() BaseListInstance
+	IsEl() BoolInstance
 }
 
 type EmptyListInstance struct {
 	*LazyProperties
+}
+
+func (list *EmptyListInstance) IsEl() BoolInstance {
+	return True
 }
 
 func (list *EmptyListInstance) Head() BaseInstance {
@@ -49,6 +54,10 @@ func NewListInstance(elements ...BaseInstance) BaseListInstance {
 		current = &ListInstance{elements[i], current, NewDefaultLazyProperties()}
 	}
 	return current
+}
+
+func (list *ListInstance) IsEl() BoolInstance {
+	return False
 }
 
 func (list *ListInstance) Head() BaseInstance {
