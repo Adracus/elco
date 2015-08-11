@@ -17,6 +17,10 @@ func NewDefaultMapInstance() *MapInstance {
 	return &MapInstance{make(map[int]*MapEntry), NewDefaultLazyProperties()}
 }
 
+func (m *MapInstance) ToString() *StringInstance {
+	return NewStringInstance("Map")
+}
+
 func (m *MapInstance) Class() *Type {
 	return mapType
 }

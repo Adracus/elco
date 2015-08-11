@@ -4,6 +4,7 @@ type BaseInstance interface {
 	Props() *Properties
 	Class() *Type
 	HashCode() *IntInstance
+	ToString() *StringInstance
 }
 
 type LazyProperties struct {

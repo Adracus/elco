@@ -13,6 +13,10 @@ func (c *ClassClass) Super() BaseClass {
 	return c.super
 }
 
+func (c *ClassClass) ToString() *StringInstance {
+	return name
+}
+
 func (c *ClassClass) Name() *StringInstance {
 	return name
 }

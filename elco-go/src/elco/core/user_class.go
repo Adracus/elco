@@ -12,6 +12,10 @@ func (class *UserClass) Name() *StringInstance {
 	return class.name
 }
 
+func (class *UserClass) ToString() *StringInstance {
+	return class.name
+}
+
 func (class *UserClass) Super() BaseClass {
 	return class.super
 }

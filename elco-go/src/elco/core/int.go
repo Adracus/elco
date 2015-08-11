@@ -1,5 +1,7 @@
 package core
 
+import "strconv"
+
 type IntInstance struct {
 	value int
 	*LazyProperties
@@ -15,6 +17,10 @@ func (this *IntInstance) Plus(that *IntInstance) *IntInstance {
 
 func (int *IntInstance) HashCode() *IntInstance {
 	return int
+}
+
+func (int *IntInstance) ToString() *StringInstance {
+	return NewStringInstance(strconv.Itoa(int.value))
 }
 
 var intType = SimpleType(Int)

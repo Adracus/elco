@@ -15,6 +15,10 @@ func (str *StringInstance) HashCode() *IntInstance {
 	return NewIntInstance(acc)
 }
 
+func (str *StringInstance) ToString() *StringInstance {
+	return str
+}
+
 func (str *StringInstance) Class() *Type {
 	return stringType
 }

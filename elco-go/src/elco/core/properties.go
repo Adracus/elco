@@ -18,6 +18,10 @@ func (this *Properties) Merge(that *Properties) {
 	})
 }
 
+func (props *Properties) ToString() *StringInstance {
+	return NewStringInstance("Properties")
+}
+
 func (props *Properties) Inheritable() *Properties {
 	newProps := NewProperties()
 	newProps.SetAll("public", props.values.Get(NewStringInstance("public")).(*MapInstance))
