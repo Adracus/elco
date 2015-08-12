@@ -1,7 +1,7 @@
 package core
 
-var Object *UserClass
+var Object *ClassInstance
 
 func init() {
-	Object = NewUserClass("Object", nil, NewProperties(), NewProperties())
+	Object = NewClass("Object", nil, El)
 }

@@ -3,30 +3,19 @@ package core
 type BaseInstance interface {
 	Props() *Properties
 	Class() *Type
-	HashCode() *IntInstance
-	ToString() *StringInstance
 }
 
 type LazyProperties struct {
-	props     *Properties
-	generator func() *Properties
+	props *Properties
 }
 
-func NewDefaultLazyProperties() *LazyProperties {
-	return NewLazyProperties(nil)
-}
-
-func NewLazyProperties(generator func() *Properties) *LazyProperties {
-	return &LazyProperties{nil, generator}
+func NewLazyProperties() *LazyProperties {
+	return &LazyProperties{}
 }
 
 func (lazy *LazyProperties) Props() *Properties {
 	if lazy.props == nil {
-		if lazy.generator != nil {
-			lazy.props = lazy.generator()
-		} else {
-			lazy.props = NewProperties()
-		}
+		lazy.props = NewProperties()
 	}
 	return lazy.props
 }
@@ -40,6 +29,11 @@ func (inst *Instance) Class() *Type {
 	return inst.class
 }
 
-func NewInstance(class *Type, props func() *Properties) *Instance {
-	return &Instance{NewLazyProperties(props), class}
+func Invoke(inst BaseInstance, level string, name string, values ...BaseInstance) BaseInstance {
+	prop := inst.Props().Get(level, name)
+	return prop.(*UnboundMethodInstance).Invoke(inst, values...)
+}
+
+func NewInstance(class *Type) *Instance {
+	return &Instance{NewLazyProperties(), class}
 }

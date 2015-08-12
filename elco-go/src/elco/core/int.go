@@ -4,14 +4,14 @@ import "strconv"
 
 type IntInstance struct {
 	value int
-	*LazyProperties
+	*Instance
 }
 
 func (int *IntInstance) Class() *Type {
 	return intType
 }
 
-func (this *IntInstance) Plus(that *IntInstance) *IntInstance {
+func Plus(this *IntInstance, that *IntInstance) *IntInstance {
 	return NewIntInstance(this.value + that.value)
 }
 
@@ -24,12 +24,8 @@ func (int *IntInstance) ToString() *StringInstance {
 }
 
 var intType = SimpleType(Int)
-var Int *UserClass
-
-func init() {
-	Int = NewUserClass("Int", Class, NewProperties(), NewProperties())
-}
+var Int = NewClass("Int", Object, El)
 
 func NewIntInstance(value int) *IntInstance {
-	return &IntInstance{value, NewDefaultLazyProperties()}
+	return &IntInstance{value, NewInstance(SimpleType(Int))}
 }

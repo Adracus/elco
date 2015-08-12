@@ -5,51 +5,22 @@ type BoolInstance interface {
 }
 
 type falseInstance struct {
-	*LazyProperties
+	*Instance
 }
 
 type trueInstance struct {
-	*LazyProperties
+	*Instance
 }
 
-var True = &trueInstance{NewDefaultLazyProperties()}
-var False = &falseInstance{NewDefaultLazyProperties()}
+var True = &trueInstance{NewInstance(SimpleType(Bool))}
+var False = &falseInstance{NewInstance(SimpleType(Bool))}
 
-func (t *trueInstance) Class() *Type {
-	return boolType
-}
-
-func (t *trueInstance) HashCode() *IntInstance {
-	return NewIntInstance(1)
-}
-
-func (t *trueInstance) ToString() *StringInstance {
-	return NewStringInstance("True")
-}
-
-func (t *trueInstance) Value() bool {
-	return true
-}
-
-func (t *falseInstance) Class() *Type {
-	return boolType
-}
-
-func (t *falseInstance) HashCode() *IntInstance {
-	return NewIntInstance(0)
-}
-
-func (t *falseInstance) ToString() *StringInstance {
-	return NewStringInstance("False")
-}
-
-func (t *falseInstance) Value() bool {
+func (f *falseInstance) Value() bool {
 	return false
 }
 
-var boolType = SimpleType(Bool)
-var Bool *UserClass
-
-func init() {
-	Bool = NewUserClass("Bool", Class, NewProperties(), NewProperties())
+func (f *trueInstance) Value() bool {
+	return true
 }
+
+var Bool = NewClass("Bool", Object, El)

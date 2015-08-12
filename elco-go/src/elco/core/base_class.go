@@ -2,38 +2,33 @@ package core
 
 type BaseClass interface {
 	Name() *StringInstance
-	Class() *Type
 	Super() BaseClass
+	Class() *Type
 	Props() *Properties
-	InstanceProps() *Properties
+	Generics() BaseListInstance
 }
 
-func GetProp(class BaseClass, level, key string) {
-	props := class.Props()
-	props.Get(level, key)
+type ClassInstance struct {
+	name  *StringInstance
+	super BaseClass
+	*Instance
+	generics BaseListInstance
 }
 
-func AddProp(class BaseClass, level, key string, inst BaseInstance) {
-	props := class.Props()
-	props.Set(level, key, inst)
+func (class *ClassInstance) Name() *StringInstance {
+	return class.name
 }
 
-func DeleteProp(class BaseClass, level, key string) {
-	props := class.Props()
-	props.Delete(level, key)
+func (class *ClassInstance) Super() BaseClass {
+	return class.super
 }
 
-func GetInstanceProp(class BaseClass, level, key string) {
-	props := class.InstanceProps()
-	props.Get(level, key)
+func (class *ClassInstance) Generics() BaseListInstance {
+	return class.generics
 }
 
-func AddInstanceProp(class BaseClass, level, key string, inst BaseInstance) {
-	props := class.InstanceProps()
-	props.Set(level, key, inst)
-}
-
-func DeleteInstanceProp(class BaseClass, level, key string) {
-	props := class.InstanceProps()
-	props.Delete(level, key)
+func NewClass(name string, super BaseClass, generics BaseListInstance) *ClassInstance {
+	_name := NewStringInstance(name)
+	_inst := NewInstance(SimpleType(Class))
+	return &ClassInstance{_name, super, _inst, generics}
 }

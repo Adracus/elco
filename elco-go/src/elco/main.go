@@ -6,6 +6,8 @@ func main() {
 	i1 := core.NewIntInstance(10)
 	i2 := core.NewIntInstance(20)
 
-	i3 := i1.Plus(i2)
-	core.Print.Apply(i3)
+	plus := i1.Class().Class().InstanceProps().Get("public", "plus").(*core.UnboundMethodInstance).Fn().(func(*core.IntInstance, *core.IntInstance) *core.IntInstance)
+	i3 := plus(i1, i2)
+
+	core.Print.Fn().(func(...core.BaseInstance))(i3)
 }

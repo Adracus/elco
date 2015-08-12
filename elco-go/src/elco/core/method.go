@@ -1,63 +1,51 @@
 package core
 
-var Method = NewUserClass("Method", nil, NewProperties(), NewProperties())
+import "reflect"
+
+var Method = NewClass("Method", Object, El)
 
 type MethodInstance struct {
-	props *Properties
-	fn    *Function
+	*Instance
+	fn interface{}
 }
 
-func (method *MethodInstance) Apply(args ...BaseInstance) BaseInstance {
-	return method.fn.Apply(args...)
+var methodType = SimpleType(Method)
+
+func (method *MethodInstance) Fn() interface{} {
+	return method.fn
 }
 
-var methodClass = SimpleType(Method)
-
-func (method *MethodInstance) Class() *Type {
-	return methodClass
+func NewMethodInstance(fn interface{}) *MethodInstance {
+	return &MethodInstance{NewInstance(methodType), fn}
 }
 
-func (method *MethodInstance) Props() *Properties {
-	return method.props
-}
-
-func (method *MethodInstance) HashCode() *IntInstance {
-	return NewIntInstance(0) // TODO: Implement hashcode
-}
-
-func (method *MethodInstance) ToString() *StringInstance {
-	return NewStringInstance("Method")
-}
-
-func NewMethodInstance(fn func(...BaseInstance) BaseInstance) *MethodInstance {
-	return &MethodInstance{Method.Props(), &Function{fn}}
-}
-
-var UnboundMethod = NewUserClass("UnboundMethod", nil, NewProperties(), NewProperties())
+var UnboundMethod = NewClass("UnboundMethod", Object, El)
 
 type UnboundMethodInstance struct {
-	props *Properties
-	fn    *UnboundFunction
+	*Instance
+	fn interface{}
 }
 
-var unboundMethodClass = SimpleType(UnboundMethod)
+var unboundMethodType = SimpleType(UnboundMethod)
 
-func (method *UnboundMethodInstance) Class() *Type {
-	return unboundMethodClass
+func (method *UnboundMethodInstance) Fn() interface{} {
+	return method.fn
 }
 
-func (method *UnboundMethodInstance) Props() *Properties {
-	return method.props
+func NewUnboundMethodInstance(fn interface{}) *UnboundMethodInstance {
+	return &UnboundMethodInstance{NewInstance(unboundMethodType), fn}
 }
 
-func (method *UnboundMethodInstance) HashCode() *IntInstance {
-	return NewIntInstance(0) // TODO: Implement hashcode
+func (method *UnboundMethodInstance) Invoke(inst BaseInstance, values ...BaseInstance) BaseInstance {
+	params := toIn(inst, values)
+	return reflect.ValueOf(method.fn).Call(params)[0].Interface().(BaseInstance)
 }
 
-func (method *UnboundMethodInstance) ToString() *StringInstance {
-	return NewStringInstance("UnboundMethod")
-}
-
-func NewUnboundMethodInstance(fn func(BaseInstance, ...BaseInstance) BaseInstance) *UnboundMethodInstance {
-	return &UnboundMethodInstance{UnboundMethod.Props(), &UnboundFunction{fn}}
+func toIn(inst BaseInstance, args []BaseInstance) []reflect.Value {
+	vs := make([]reflect.Value, len(args)+1)
+	vs[0] = reflect.ValueOf(inst)
+	for i := range args {
+		vs[i+1] = reflect.ValueOf(args[i])
+	}
+	return vs
 }
