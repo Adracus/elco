@@ -27,5 +27,7 @@ var intType = SimpleType(Int)
 var Int = NewClass("Int", Object, El)
 
 func NewIntInstance(value int) *IntInstance {
-	return &IntInstance{value, NewInstance(SimpleType(Int))}
+	return &IntInstance{value, NewInstance(func() *Type {
+		return intType
+	})}
 }

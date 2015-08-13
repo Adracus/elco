@@ -39,7 +39,9 @@ func NewListInstance(elements ...BaseInstance) BaseListInstance {
 	}
 	var current BaseListInstance = El
 	for i := l - 1; i >= 0; i-- {
-		current = &ListInstance{elements[i], current, NewInstance(listType)}
+		current = &ListInstance{elements[i], current, NewInstance(func() *Type {
+			return listType
+		})}
 	}
 	return current
 }

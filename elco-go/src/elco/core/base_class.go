@@ -9,14 +9,23 @@ type BaseClass interface {
 }
 
 type ClassInstance struct {
-	name  *StringInstance
+	*LazyStringInstance
 	super BaseClass
 	*Instance
 	generics BaseListInstance
 }
 
+func Define(class BaseClass, name string, fn interface{}) *UnboundMethodInstance {
+	m := class.Props().Map().Values()
+	hash := HashString(name)
+	key := NewStringInstance(name)
+	value := NewUnboundMethodInstance(fn)
+	m[hash] = &MapEntry{key, value}
+	return value
+}
+
 func (class *ClassInstance) Name() *StringInstance {
-	return class.name
+	return class.String()
 }
 
 func (class *ClassInstance) Super() BaseClass {
@@ -28,7 +37,9 @@ func (class *ClassInstance) Generics() BaseListInstance {
 }
 
 func NewClass(name string, super BaseClass, generics BaseListInstance) *ClassInstance {
-	_name := NewStringInstance(name)
-	_inst := NewInstance(SimpleType(Class))
+	_name := NewLazyString(name)
+	_inst := NewInstance(func() *Type {
+		return SimpleType(Class)
+	})
 	return &ClassInstance{_name, super, _inst, generics}
 }

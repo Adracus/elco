@@ -22,18 +22,17 @@ func (lazy *LazyProperties) Props() *Properties {
 
 type Instance struct {
 	*LazyProperties
-	class *Type
-}
-
-func (inst *Instance) Class() *Type {
-	return inst.class
+	*LazyType
 }
 
 func Invoke(inst BaseInstance, level string, name string, values ...BaseInstance) BaseInstance {
-	prop := inst.Props().Get(level, name)
+	levelHash := HashString(level)
+	nameHash := HashString(name)
+	visibilityMap := inst.Props().Map().Values()[levelHash].Value.(*MapInstance)
+	prop := visibilityMap.Values()[nameHash].Value
 	return prop.(*UnboundMethodInstance).Invoke(inst, values...)
 }
 
-func NewInstance(class *Type) *Instance {
-	return &Instance{NewLazyProperties(), class}
+func NewInstance(classGenerator func() *Type) *Instance {
+	return &Instance{NewLazyProperties(), NewLazyType(classGenerator)}
 }

@@ -13,8 +13,14 @@ type MapInstance struct {
 	*Instance
 }
 
+func (m *MapInstance) Values() map[int]*MapEntry {
+	return m.values
+}
+
 func NewMapInstance() *MapInstance {
-	return &MapInstance{make(map[int]*MapEntry), NewInstance(mapType)}
+	return &MapInstance{make(map[int]*MapEntry), NewInstance(func() *Type {
+		return mapType
+	})}
 }
 
 func init() {

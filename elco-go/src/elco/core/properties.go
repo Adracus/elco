@@ -1,8 +1,12 @@
 package core
 
 type Properties struct {
-	values *MapInstance
+	m *MapInstance
 	*Instance
+}
+
+func (props *Properties) Map() *MapInstance {
+	return props.m
 }
 
 var PropertyClass = NewClass("Properties", Object, El)
@@ -13,5 +17,7 @@ func NewProperties() *Properties {
 	Invoke(m, "public", "put", NewMapInstance())
 	Invoke(m, "protected", "put", NewMapInstance())
 	Invoke(m, "private", "put", NewMapInstance())
-	return &Properties{m, NewInstance(propertyType)}
+	return &Properties{m, NewInstance(func() *Type {
+		return propertyType
+	})}
 }

@@ -16,7 +16,9 @@ func (method *MethodInstance) Fn() interface{} {
 }
 
 func NewMethodInstance(fn interface{}) *MethodInstance {
-	return &MethodInstance{NewInstance(methodType), fn}
+	return &MethodInstance{NewInstance(func() *Type {
+		return methodType
+	}), fn}
 }
 
 var UnboundMethod = NewClass("UnboundMethod", Object, El)
@@ -33,7 +35,9 @@ func (method *UnboundMethodInstance) Fn() interface{} {
 }
 
 func NewUnboundMethodInstance(fn interface{}) *UnboundMethodInstance {
-	return &UnboundMethodInstance{NewInstance(unboundMethodType), fn}
+	return &UnboundMethodInstance{NewInstance(func() *Type {
+		return unboundMethodType
+	}), fn}
 }
 
 func (method *UnboundMethodInstance) Invoke(inst BaseInstance, values ...BaseInstance) BaseInstance {
