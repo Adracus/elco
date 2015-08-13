@@ -32,6 +32,6 @@ var typeFn = func() *Type {
 
 var Bool = NewLazyClass(func() BaseClass {
 	return NewClass("Bool", func() BaseClass {
-		return Object
+		return Object.Class()
 	}, El)
 })

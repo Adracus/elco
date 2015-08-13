@@ -19,14 +19,19 @@ func (int *IntInstance) ToString() *StringInstance {
 	return NewStringInstance(strconv.Itoa(int.value))
 }
 
-var intType = NewLazyType(func() *Type {
-	return SimpleType(Int.Class())
-})
-var Int = NewLazyClass(func() BaseClass {
-	return NewClass("Int", func() BaseClass {
-		return Object
-	}, El)
-})
+var intType *LazyType
+var Int *LazyClass
+
+func init() {
+	intType = NewLazyType(func() *Type {
+		return SimpleType(Int.Class())
+	})
+	Int = NewLazyClass(func() BaseClass {
+		return NewClass("Int", func() BaseClass {
+			return Object.Class()
+		}, El)
+	})
+}
 
 func NewIntInstance(value int) *IntInstance {
 	return &IntInstance{value, NewInstance(func() *Type {

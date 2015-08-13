@@ -6,7 +6,7 @@ var mapType *LazyType
 func init() {
 	Map = NewLazyClass(func() BaseClass {
 		return NewClass("Map", func() BaseClass {
-			return Object
+			return Object.Class()
 		}, El)
 	})
 	mapType = NewLazyType(func() *Type {
@@ -28,10 +28,15 @@ func (m *MapInstance) Values() map[int]*MapEntry {
 	return m.values
 }
 
-func NewMapInstance() *MapInstance {
-	return &MapInstance{make(map[int]*MapEntry), NewInstance(mapType.Class)}
+func (m *MapInstance) Put(key string, value BaseInstance) {
+	keyString := NewStringInstance(key)
+	m.values[keyString.HashCode()] = &MapEntry{keyString, value}
 }
 
-func init() {
+func (m *MapInstance) Get(key string) BaseInstance {
+	return m.values[HashString(key)].Value
+}
 
+func NewMapInstance() *MapInstance {
+	return &MapInstance{make(map[int]*MapEntry), NewInstance(mapType.Class)}
 }

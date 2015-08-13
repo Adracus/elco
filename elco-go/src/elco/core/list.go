@@ -2,7 +2,7 @@ package core
 
 var List = NewLazyClass(func() BaseClass {
 	return NewClass("List", func() BaseClass {
-		return Object
+		return Object.Class()
 	}, El)
 })
 var listType = NewLazyType(func() *Type {

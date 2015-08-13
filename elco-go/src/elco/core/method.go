@@ -4,7 +4,7 @@ import "reflect"
 
 var Method = NewLazyClass(func() BaseClass {
 	return NewClass("Method", func() BaseClass {
-		return Object
+		return Object.Class()
 	}, El)
 })
 
@@ -29,7 +29,7 @@ func NewMethodInstance(fn interface{}) *MethodInstance {
 
 var UnboundMethod = NewLazyClass(func() BaseClass {
 	return NewClass("UnboundMethod", func() BaseClass {
-		return Object
+		return Object.Class()
 	}, El)
 })
 

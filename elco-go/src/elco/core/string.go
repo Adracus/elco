@@ -30,9 +30,13 @@ var stringType = NewLazyType(func() *Type {
 })
 var String = NewLazyClass(func() BaseClass {
 	return NewClass("String", func() BaseClass {
-		return Object
+		return Object.Class()
 	}, El)
 })
+
+func (str *StringInstance) HashCode() int {
+	return HashString(str.value)
+}
 
 func NewStringInstance(value string) *StringInstance {
 	return &StringInstance{value, NewInstance(func() *Type {
