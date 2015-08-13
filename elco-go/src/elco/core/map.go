@@ -1,11 +1,18 @@
 package core
 
-var Map = NewClass("Map", func() BaseClass {
-	return Object
-}, El)
-var mapType = NewLazyType(func() *Type {
-	return SimpleType(Map)
-})
+var Map *LazyClass
+var mapType *LazyType
+
+func init() {
+	Map = NewLazyClass(func() BaseClass {
+		return NewClass("Map", func() BaseClass {
+			return Object
+		}, El)
+	})
+	mapType = NewLazyType(func() *Type {
+		return SimpleType(Map.Class())
+	})
+}
 
 type MapEntry struct {
 	Key   BaseInstance

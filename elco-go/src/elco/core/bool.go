@@ -24,12 +24,14 @@ func (f *trueInstance) Value() bool {
 }
 
 var boolType = NewLazyType(func() *Type {
-	return SimpleType(Bool)
+	return SimpleType(Bool.Class())
 })
 var typeFn = func() *Type {
 	return boolType.Class()
 }
 
-var Bool = NewClass("Bool", func() BaseClass {
-	return Object
-}, El)
+var Bool = NewLazyClass(func() BaseClass {
+	return NewClass("Bool", func() BaseClass {
+		return Object
+	}, El)
+})

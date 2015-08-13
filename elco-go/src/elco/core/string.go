@@ -25,14 +25,18 @@ func (lazy *LazyStringInstance) String() *StringInstance {
 	return _string
 }
 
-var stringType = SimpleType(String)
-var String = NewClass("String", func() BaseClass {
-	return Object
-}, El)
+var stringType = NewLazyType(func() *Type {
+	return SimpleType(String.Class())
+})
+var String = NewLazyClass(func() BaseClass {
+	return NewClass("String", func() BaseClass {
+		return Object
+	}, El)
+})
 
 func NewStringInstance(value string) *StringInstance {
 	return &StringInstance{value, NewInstance(func() *Type {
-		return stringType
+		return stringType.Class()
 	})}
 }
 
@@ -42,8 +46,4 @@ func HashString(s string) int {
 		acc += int(math.Pow(float64(c), float64(i)))
 	}
 	return acc
-}
-
-func init() {
-	String.Props()
 }

@@ -9,12 +9,19 @@ func (props *Properties) Map() *MapInstance {
 	return props.m
 }
 
-var PropertyClass = NewClass("Properties", func() BaseClass {
-	return Object
-}, El)
-var propertyType = NewLazyType(func() *Type {
-	return SimpleType(PropertyClass)
-})
+var PropertyClass *LazyClass
+var propertyType *LazyType
+
+func init() {
+	PropertyClass = NewLazyClass(func() BaseClass {
+		return NewClass("Properties", func() BaseClass {
+			return Object
+		}, El)
+	})
+	propertyType = NewLazyType(func() *Type {
+		return SimpleType(PropertyClass.Class())
+	})
+}
 
 func NewProperties() *Properties {
 	m := NewMapInstance()

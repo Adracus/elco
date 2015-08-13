@@ -20,11 +20,13 @@ func (int *IntInstance) ToString() *StringInstance {
 }
 
 var intType = NewLazyType(func() *Type {
-	return SimpleType(Int)
+	return SimpleType(Int.Class())
 })
-var Int = NewClass("Int", func() BaseClass {
-	return Object
-}, El)
+var Int = NewLazyClass(func() BaseClass {
+	return NewClass("Int", func() BaseClass {
+		return Object
+	}, El)
+})
 
 func NewIntInstance(value int) *IntInstance {
 	return &IntInstance{value, NewInstance(func() *Type {

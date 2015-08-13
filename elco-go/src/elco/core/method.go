@@ -2,9 +2,11 @@ package core
 
 import "reflect"
 
-var Method = NewClass("Method", func() BaseClass {
-	return Object
-}, El)
+var Method = NewLazyClass(func() BaseClass {
+	return NewClass("Method", func() BaseClass {
+		return Object
+	}, El)
+})
 
 type MethodInstance struct {
 	*Instance
@@ -12,7 +14,7 @@ type MethodInstance struct {
 }
 
 var methodType = NewLazyType(func() *Type {
-	return SimpleType(Method)
+	return SimpleType(Method.Class())
 })
 
 func (method *MethodInstance) Fn() interface{} {
@@ -25,9 +27,11 @@ func NewMethodInstance(fn interface{}) *MethodInstance {
 	}), fn}
 }
 
-var UnboundMethod = NewClass("UnboundMethod", func() BaseClass {
-	return Object
-}, El)
+var UnboundMethod = NewLazyClass(func() BaseClass {
+	return NewClass("UnboundMethod", func() BaseClass {
+		return Object
+	}, El)
+})
 
 type UnboundMethodInstance struct {
 	*Instance
@@ -35,7 +39,7 @@ type UnboundMethodInstance struct {
 }
 
 var unboundMethodType = NewLazyType(func() *Type {
-	return SimpleType(UnboundMethod)
+	return SimpleType(UnboundMethod.Class())
 })
 
 func (method *UnboundMethodInstance) Fn() interface{} {

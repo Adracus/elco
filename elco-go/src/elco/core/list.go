@@ -1,10 +1,12 @@
 package core
 
-var List = NewClass("List", func() BaseClass {
-	return Object
-}, El)
+var List = NewLazyClass(func() BaseClass {
+	return NewClass("List", func() BaseClass {
+		return Object
+	}, El)
+})
 var listType = NewLazyType(func() *Type {
-	return SimpleType(List)
+	return SimpleType(List.Class())
 })
 var El = &EmptyListInstance{NewLazyProperties()}
 

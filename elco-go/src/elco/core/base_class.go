@@ -52,3 +52,15 @@ func NewClass(name string, super func() BaseClass, generics BaseListInstance) *C
 	_super := NewLazySuper(super)
 	return &ClassInstance{_name, _inst, _super, generics}
 }
+
+type LazyClass struct {
+	lazy *Lazy
+}
+
+func NewLazyClass(gen func() BaseClass) *LazyClass {
+	return &LazyClass{NewLazy(gen)}
+}
+
+func (lc *LazyClass) Class() BaseClass {
+	return lc.lazy.Value().(BaseClass)
+}
