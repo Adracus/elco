@@ -6,19 +6,15 @@ type Type struct {
 }
 
 type LazyType struct {
-	typeGenerator func() *Type
-	t             *Type
+	lazy *Lazy
 }
 
 func NewLazyType(typeGenerator func() *Type) *LazyType {
-	return &LazyType{typeGenerator, nil}
+	return &LazyType{NewLazy(typeGenerator)}
 }
 
 func (l *LazyType) Class() *Type {
-	if l.t == nil {
-		l.t = l.typeGenerator()
-	}
-	return l.t
+	return l.lazy.Value().(*Type)
 }
 
 func SimpleType(class BaseClass) *Type {

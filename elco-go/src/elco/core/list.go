@@ -1,7 +1,11 @@
 package core
 
-var List = NewClass("List", Object, El)
-var listType = SimpleType(List)
+var List = NewClass("List", func() BaseClass {
+	return Object
+}, El)
+var listType = NewLazyType(func() *Type {
+	return SimpleType(List)
+})
 var El = &EmptyListInstance{NewLazyProperties()}
 
 type BaseListInstance interface {
@@ -40,7 +44,7 @@ func NewListInstance(elements ...BaseInstance) BaseListInstance {
 	var current BaseListInstance = El
 	for i := l - 1; i >= 0; i-- {
 		current = &ListInstance{elements[i], current, NewInstance(func() *Type {
-			return listType
+			return listType.Class()
 		})}
 	}
 	return current

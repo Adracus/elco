@@ -23,9 +23,13 @@ func (f *trueInstance) Value() bool {
 	return true
 }
 
-var boolType = SimpleType(Bool)
+var boolType = NewLazyType(func() *Type {
+	return SimpleType(Bool)
+})
 var typeFn = func() *Type {
-	return boolType
+	return boolType.Class()
 }
 
-var Bool = NewClass("Bool", Object, El)
+var Bool = NewClass("Bool", func() BaseClass {
+	return Object
+}, El)

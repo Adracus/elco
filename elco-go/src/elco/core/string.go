@@ -26,7 +26,9 @@ func (lazy *LazyStringInstance) String() *StringInstance {
 }
 
 var stringType = SimpleType(String)
-var String = NewClass("String", Object, El)
+var String = NewClass("String", func() BaseClass {
+	return Object
+}, El)
 
 func NewStringInstance(value string) *StringInstance {
 	return &StringInstance{value, NewInstance(func() *Type {

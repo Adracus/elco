@@ -5,24 +5,17 @@ type BaseInstance interface {
 	Class() *Type
 }
 
-type LazyProperties struct {
-	props *Properties
-}
-
-func NewLazyProperties() *LazyProperties {
-	return &LazyProperties{}
-}
-
-func (lazy *LazyProperties) Props() *Properties {
-	if lazy.props == nil {
-		lazy.props = NewProperties()
-	}
-	return lazy.props
-}
-
 type Instance struct {
-	*LazyProperties
-	*LazyType
+	props *LazyProperties
+	class *LazyType
+}
+
+func (inst *Instance) Props() *Properties {
+	return inst.props.Props()
+}
+
+func (inst *Instance) Class() *Type {
+	return inst.class.Class()
 }
 
 func Invoke(inst BaseInstance, level string, name string, values ...BaseInstance) BaseInstance {
