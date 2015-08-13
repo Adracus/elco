@@ -31,6 +31,16 @@ func init() {
 			return Object.Class()
 		}, El)
 	})
+
+	Define(Int.Class(), "public", "hashCode", func(i *IntInstance) *IntInstance {
+		return i
+	})
+	Define(Int.Class(), "public", "toString", func(i *IntInstance) *StringInstance {
+		return i.ToString()
+	})
+	Define(Int.Class(), "public", "plus", func(a *IntInstance, b *IntInstance) *IntInstance {
+		return NewIntInstance(a.value + b.value)
+	})
 }
 
 func NewIntInstance(value int) *IntInstance {

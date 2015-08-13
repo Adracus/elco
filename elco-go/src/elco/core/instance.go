@@ -19,11 +19,8 @@ func (inst *Instance) Class() *Type {
 }
 
 func Invoke(inst BaseInstance, level string, name string, values ...BaseInstance) BaseInstance {
-	levelHash := HashString(level)
-	nameHash := HashString(name)
-	visibilityMap := inst.Props().Map().Values()[levelHash].Value.(*MapInstance)
-	prop := visibilityMap.Values()[nameHash].Value
-	return prop.(*UnboundMethodInstance).Invoke(inst, values...)
+	method := inst.Class().Class().Props().Get(level, name).(*UnboundMethodInstance)
+	return method.Invoke(inst, values...)
 }
 
 func NewInstance(classGenerator func() *Type) *Instance {

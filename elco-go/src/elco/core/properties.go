@@ -9,9 +9,18 @@ func (props *Properties) Map() *MapInstance {
 	return props.m
 }
 
+func (props *Properties) innerMap(level string) *MapInstance {
+	return props.Map().Get(level).(*MapInstance)
+}
+
 func (props *Properties) Put(level, name string, value BaseInstance) {
-	innerMap := props.Map().Get(level).(*MapInstance)
-	innerMap.Put(name, value)
+	inner := props.innerMap(level)
+	inner.Put(name, value)
+}
+
+func (props *Properties) Get(level, name string) BaseInstance {
+	inner := props.innerMap(level)
+	return inner.Get(name)
 }
 
 var PropertyClass *LazyClass
@@ -30,9 +39,9 @@ func init() {
 
 func NewProperties() *Properties {
 	m := NewMapInstance()
-	Invoke(m, "public", "put", NewMapInstance())
-	Invoke(m, "protected", "put", NewMapInstance())
-	Invoke(m, "private", "put", NewMapInstance())
+	m.Put("public", NewMapInstance())
+	m.Put("protected", NewMapInstance())
+	m.Put("private", NewMapInstance())
 	return &Properties{m, NewInstance(func() *Type {
 		return propertyType.Class()
 	})}

@@ -25,14 +25,19 @@ func (lazy *LazyStringInstance) String() *StringInstance {
 	return _string
 }
 
-var stringType = NewLazyType(func() *Type {
-	return SimpleType(String.Class())
-})
-var String = NewLazyClass(func() BaseClass {
-	return NewClass("String", func() BaseClass {
-		return Object.Class()
-	}, El)
-})
+var stringType *LazyType
+var String *LazyClass
+
+func init() {
+	stringType = NewLazyType(func() *Type {
+		return SimpleType(String.Class())
+	})
+	String = NewLazyClass(func() BaseClass {
+		return NewClass("String", func() BaseClass {
+			return Object.Class()
+		}, El)
+	})
+}
 
 func (str *StringInstance) HashCode() int {
 	return HashString(str.value)

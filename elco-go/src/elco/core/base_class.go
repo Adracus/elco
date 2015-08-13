@@ -27,15 +27,6 @@ func NewLazySuper(gen func() BaseClass) *LazySuper {
 	return &LazySuper{NewLazy(gen)}
 }
 
-func Define(class BaseClass, name string, fn interface{}) *UnboundMethodInstance {
-	m := class.Props().Map().Values()
-	hash := HashString(name)
-	key := NewStringInstance(name)
-	value := NewUnboundMethodInstance(fn)
-	m[hash] = &MapEntry{key, value}
-	return value
-}
-
 func (class *ClassInstance) Name() *StringInstance {
 	return class.String()
 }
@@ -55,6 +46,10 @@ func NewClass(name string, super func() BaseClass, generics BaseListInstance) *C
 
 type LazyClass struct {
 	lazy *Lazy
+}
+
+func Define(class BaseClass, level, name string, fn interface{}) {
+	class.Props().Put(level, name, NewUnboundMethodInstance(fn))
 }
 
 func NewLazyClass(gen func() BaseClass) *LazyClass {
