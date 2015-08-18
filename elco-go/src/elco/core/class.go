@@ -12,4 +12,8 @@ func init() {
 	classType = NewLazyType(func() *Type {
 		return SimpleType(Class.Class())
 	})
+
+	Define(Class.Class(), "public", "create", func(class BaseClass) BaseInstance {
+		return NewInstance(class.Class)
+	})
 }

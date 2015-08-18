@@ -43,6 +43,10 @@ func (str *StringInstance) HashCode() int {
 	return HashString(str.value)
 }
 
+func (str *StringInstance) Value() string {
+	return str.value
+}
+
 func NewStringInstance(value string) *StringInstance {
 	return &StringInstance{value, NewInstance(func() *Type {
 		return stringType.Class()
