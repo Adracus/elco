@@ -14,6 +14,8 @@ func init() {
 	})
 
 	Define(Class.Class(), "public", "create", func(class BaseClass) BaseInstance {
-		return NewInstance(class.Class)
+		return NewInstance(func() *Type {
+			return SimpleType(class)
+		})
 	})
 }

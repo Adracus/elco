@@ -22,16 +22,24 @@ func GetAndInvoke(inst BaseInstance, name string, values ...BaseInstance) BaseIn
 	return Invoke(Get(inst, name), values...)
 }
 
-func Get(inst BaseInstance, name string) BaseInstance {
+func Find(inst BaseInstance, name string) (BaseInstance, bool) {
 	v, ok := inst.Props().Find(name)
 	if ok {
-		return v
+		return v, true
 	}
 	v, ok = classLookup(inst.Class().Class(), name)
 	if ok {
-		return v.(*UnboundMethodInstance).Bind(inst)
+		return v.(*UnboundMethodInstance).Bind(inst), true
 	}
-	return nil
+	return nil, false
+}
+
+func Get(inst BaseInstance, name string) BaseInstance {
+	v, ok := Find(inst, name)
+	if !ok {
+		panic("Could not find attribute '" + name + "'")
+	}
+	return v
 }
 
 func classLookup(class BaseClass, name string) (BaseInstance, bool) {
@@ -39,7 +47,7 @@ func classLookup(class BaseClass, name string) (BaseInstance, bool) {
 	if ok {
 		return v, true
 	}
-	if nil == class.Super() {
+	if class == class.Super() {
 		return nil, false
 	}
 	return classLookup(class.Super(), name)

@@ -8,5 +8,8 @@ func main() {
 	i3 := core.GetAndInvoke(i1, "plus", i2)
 
 	core.Invoke(core.Println, i3)
-	core.Invoke(core.Println, i3)
+
+	core.Invoke(core.Println, core.UnitInstance)
+
+	//fmt.Println(core.Get(core.UnitInstance, "create"))
 }

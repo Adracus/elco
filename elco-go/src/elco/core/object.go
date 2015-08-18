@@ -12,4 +12,13 @@ func init() {
 	objectType = NewLazyType(func() *Type {
 		return SimpleType(Object.Class())
 	})
+
+	Define(Object.Class(), "public", "toString", func(inst BaseInstance) BaseInstance {
+		return inst.Class().Class().Name()
+	})
+
+	Define(Object.Class(), "public", "respondsTo", func(inst BaseInstance, name *StringInstance) BoolInstance {
+		_, ok := Find(inst, name.Value())
+		return ToBool(ok)
+	})
 }

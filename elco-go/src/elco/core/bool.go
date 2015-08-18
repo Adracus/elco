@@ -35,3 +35,10 @@ var Bool = NewLazyClass(func() BaseClass {
 		return Object.Class()
 	}, El)
 })
+
+func ToBool(value bool) BoolInstance {
+	if value {
+		return True
+	}
+	return False
+}
