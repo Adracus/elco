@@ -10,7 +10,11 @@ func (props *Properties) Map() *MapInstance {
 }
 
 func (props *Properties) innerMap(level string) *MapInstance {
-	return props.Map().Get(level).(*MapInstance)
+	m, ok := props.Map().Get(level)
+	if !ok {
+		panic("Illegal level access '" + level + "'")
+	}
+	return m.(*MapInstance)
 }
 
 func (props *Properties) Put(level, name string, value BaseInstance) {
@@ -18,7 +22,25 @@ func (props *Properties) Put(level, name string, value BaseInstance) {
 	inner.Put(name, value)
 }
 
-func (props *Properties) Get(level, name string) BaseInstance {
+func (props *Properties) Find(name string) (BaseInstance, bool) {
+	var res BaseInstance
+	var ok bool
+	res, ok = props.Get("public", name)
+	if ok {
+		return res, true
+	}
+	res, ok = props.Get("protected", name)
+	if ok {
+		return res, true
+	}
+	res, ok = props.Get("private", name)
+	if ok {
+		return res, true
+	}
+	return nil, false
+}
+
+func (props *Properties) Get(level, name string) (BaseInstance, bool) {
 	inner := props.innerMap(level)
 	return inner.Get(name)
 }

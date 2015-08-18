@@ -21,6 +21,14 @@ func (method *MethodInstance) Fn() interface{} {
 	return method.fn
 }
 
+func (method *MethodInstance) Invoke(values ...BaseInstance) BaseInstance {
+	vs := make([]reflect.Value, len(values))
+	for i := range values {
+		vs[i] = reflect.ValueOf(values[i])
+	}
+	return reflect.ValueOf(method.fn).Call(vs)[0].Interface().(BaseInstance)
+}
+
 func NewMethodInstance(fn interface{}) *MethodInstance {
 	return &MethodInstance{NewInstance(func() *Type {
 		return methodType.Class()

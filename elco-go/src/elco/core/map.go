@@ -33,8 +33,13 @@ func (m *MapInstance) Put(key string, value BaseInstance) {
 	m.values[keyString.HashCode()] = &MapEntry{keyString, value}
 }
 
-func (m *MapInstance) Get(key string) BaseInstance {
-	return m.values[HashString(key)].Value
+func (m *MapInstance) Get(key string) (BaseInstance, bool) {
+	var result BaseInstance
+	entry, ok := m.values[HashString(key)]
+	if !ok {
+		return result, false
+	}
+	return entry.Value, true
 }
 
 func NewMapInstance() *MapInstance {

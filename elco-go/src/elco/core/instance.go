@@ -18,9 +18,48 @@ func (inst *Instance) Class() *Type {
 	return inst.class.Class()
 }
 
+func Call(inst BaseInstance, name string, values ...BaseInstance) BaseInstance {
+	callable, found := getMatching(inst, name)
+	if !found {
+		panic("Could not find " + name)
+	}
+	return apply(callable, inst, values...)
+}
+
+func apply(method BaseInstance, on BaseInstance, values ...BaseInstance) BaseInstance {
+	unbound, ok := method.(*UnboundMethodInstance)
+	if ok {
+		return unbound.Invoke(on, values...)
+	}
+	return method.(*MethodInstance).Invoke(values...)
+}
+
+func getMatching(inst BaseInstance, name string) (BaseInstance, bool) {
+	v, ok := inst.Props().Find(name)
+	if ok {
+		return v, true
+	}
+	v, ok = classLookup(inst.Class().Class(), name)
+	return v, ok
+}
+
+func classLookup(class BaseClass, name string) (BaseInstance, bool) {
+	v, ok := class.InstanceProps().Find(name)
+	if ok {
+		return v, true
+	}
+	if nil == class.Super() {
+		return nil, false
+	}
+	return classLookup(class.Super(), name)
+}
+
 func Invoke(inst BaseInstance, level string, name string, values ...BaseInstance) BaseInstance {
-	method := inst.Class().Class().Props().Get(level, name).(*UnboundMethodInstance)
-	return method.Invoke(inst, values...)
+	method, ok := inst.Class().Class().InstanceProps().Get(level, name)
+	if !ok {
+		panic("Instance does not contain method " + name + " at level " + level)
+	}
+	return method.(*UnboundMethodInstance).Invoke(inst, values...)
 }
 
 func NewInstance(classGenerator func() *Type) *Instance {

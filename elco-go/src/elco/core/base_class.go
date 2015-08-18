@@ -5,6 +5,7 @@ type BaseClass interface {
 	Super() BaseClass
 	Class() *Type
 	Props() *Properties
+	InstanceProps() *Properties
 	Generics() BaseListInstance
 }
 
@@ -12,7 +13,8 @@ type ClassInstance struct {
 	*LazyStringInstance
 	*Instance
 	*LazySuper
-	generics BaseListInstance
+	instanceProps *LazyProperties
+	generics      BaseListInstance
 }
 
 type LazySuper struct {
@@ -27,6 +29,10 @@ func NewLazySuper(gen func() BaseClass) *LazySuper {
 	return &LazySuper{NewLazy(gen)}
 }
 
+func (class *ClassInstance) InstanceProps() *Properties {
+	return class.instanceProps.Props()
+}
+
 func (class *ClassInstance) Name() *StringInstance {
 	return class.String()
 }
@@ -38,10 +44,10 @@ func (class *ClassInstance) Generics() BaseListInstance {
 func NewClass(name string, super func() BaseClass, generics BaseListInstance) *ClassInstance {
 	_name := NewLazyString(name)
 	_inst := NewInstance(func() *Type {
-		return SimpleType(Class)
+		return SimpleType(Class.Class())
 	})
 	_super := NewLazySuper(super)
-	return &ClassInstance{_name, _inst, _super, generics}
+	return &ClassInstance{_name, _inst, _super, NewLazyProperties(), generics}
 }
 
 type LazyClass struct {
@@ -49,7 +55,7 @@ type LazyClass struct {
 }
 
 func Define(class BaseClass, level, name string, fn interface{}) {
-	class.Props().Put(level, name, NewUnboundMethodInstance(fn))
+	class.InstanceProps().Put(level, name, NewUnboundMethodInstance(fn))
 }
 
 func NewLazyClass(gen func() BaseClass) *LazyClass {

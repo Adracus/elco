@@ -11,8 +11,8 @@ func Plus(this *IntInstance, that *IntInstance) *IntInstance {
 	return NewIntInstance(this.value + that.value)
 }
 
-func (int *IntInstance) HashCode() *IntInstance {
-	return int
+func (i *IntInstance) HashCode() *IntInstance {
+	return i
 }
 
 func (int *IntInstance) ToString() *StringInstance {
