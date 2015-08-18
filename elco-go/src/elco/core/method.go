@@ -65,6 +65,12 @@ func (method *UnboundMethodInstance) Invoke(inst BaseInstance, values ...BaseIns
 	return reflect.ValueOf(method.fn).Call(params)[0].Interface().(BaseInstance)
 }
 
+func (method *UnboundMethodInstance) Bind(inst BaseInstance) BaseInstance {
+	return NewMethodInstance(func(args ...BaseInstance) BaseInstance {
+		return method.Invoke(inst, args...)
+	})
+}
+
 func toIn(inst BaseInstance, args []BaseInstance) []reflect.Value {
 	vs := make([]reflect.Value, len(args)+1)
 	vs[0] = reflect.ValueOf(inst)

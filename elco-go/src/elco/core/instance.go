@@ -26,6 +26,18 @@ func Call(inst BaseInstance, name string, values ...BaseInstance) BaseInstance {
 	return apply(callable, inst, values...)
 }
 
+func Get(inst BaseInstance, name string) BaseInstance {
+	v, ok := inst.Props().Find(name)
+	if ok {
+		return v
+	}
+	v, ok = classLookup(inst.Class().Class(), name)
+	if ok {
+		return v.(*UnboundMethodInstance).Bind(inst)
+	}
+	return nil
+}
+
 func apply(method BaseInstance, on BaseInstance, values ...BaseInstance) BaseInstance {
 	unbound, ok := method.(*UnboundMethodInstance)
 	if ok {
