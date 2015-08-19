@@ -5,4 +5,4 @@ import de.adracus.elco.ast.AstNode
 /**
  * Created by axel on 19/08/15.
  */
-class ElcoFile(expression: Expression) extends AstNode(expression)
+case class ElcoFile(expression: Expression) extends AstNode(expression)

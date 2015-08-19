@@ -1,10 +1,9 @@
 package de.adracus.elco.grammar
 
+import de.adracus.elco.ast.Extractor.{E1, E2, E3, E4, E5, E6}
 import de.adracus.elco.ast._
 
 import scala.collection.mutable.ListBuffer
-
-import Extractor.{E1, E2, E3, E4, E5, E6}
 
 /**
  * Created by axel on 07/07/15.

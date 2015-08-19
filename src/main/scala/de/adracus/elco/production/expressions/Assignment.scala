@@ -4,9 +4,12 @@ package de.adracus.elco.production.expressions
  * Created by axel on 19/08/15.
  */
 abstract class Assignment(
-                           identifier: String,
+                           ident: String,
                            expr: Expression)
-  extends Expression(identifier, expr) {
+  extends Expression(ident, expr) {
+
+  def identifier: String
+
   def expression: Expression
 }
 

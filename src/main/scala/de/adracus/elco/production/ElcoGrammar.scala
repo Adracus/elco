@@ -1,8 +1,8 @@
 package de.adracus.elco.production
 
-import de.adracus.elco._
 import de.adracus.elco.ast._
-import de.adracus.elco.grammar.{Word, NonTerminal, ProductionBuilder, Grammar}
+import de.adracus.elco.grammar.Grammar
+import de.adracus.elco.production.expressions._
 
 
 /**
