@@ -42,3 +42,10 @@ func ToBool(value bool) BoolInstance {
 	}
 	return False
 }
+
+func AsBool(inst BaseInstance) bool {
+	if v, ok := inst.(BoolInstance); ok {
+		return v.Value()
+	}
+	panic("Not a bool value: " + Get(inst, "toString").(*StringInstance).Value())
+}

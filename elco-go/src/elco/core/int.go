@@ -41,6 +41,9 @@ func init() {
 	Define(Int.Class(), "public", "plus", func(a *IntInstance, b *IntInstance) *IntInstance {
 		return NewIntInstance(a.value + b.value)
 	})
+	Define(Int.Class(), "public", "equals", func(a *IntInstance, b *IntInstance) BoolInstance {
+		return ToBool(a.value == b.value)
+	})
 }
 
 func NewIntInstance(value int) *IntInstance {

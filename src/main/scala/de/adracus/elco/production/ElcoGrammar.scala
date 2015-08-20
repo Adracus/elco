@@ -32,6 +32,8 @@ object ElcoGrammar extends Grammar {
 
   'E := 'Call single()
 
+  'E := "(" & 'E & ")" at 1
+
   'Call := "IDENTIFIER" & "(" & 'InvokeList & ")" on2 Text % Ignore % A[InvokeList]() to FunctionCall.apply
   'Call := "IDENTIFIER" & "(" & ")" on1 Text to FunctionCall.zeroArg
 

@@ -18,7 +18,7 @@ object CodeGenerator {
            |
            |import "elco/core"
            |
-           |func main() {
+           |func main() BaseInstance {
            |${recurse(expr)}
             |}
         """.stripMargin
@@ -39,9 +39,27 @@ object CodeGenerator {
       case FunctionCall(name, params) =>
         s"""core.Invoke(core.Scope.Get("$name"), ${format(params)})"""
 
+      case Conditional(condition, ifBody, elseOption) =>
+        val s = s"""if core.AsBool(${format(condition)}) {
+           |${generate(ifBody)}
+           |}
+         """.stripMargin
+
+        elseOption match {
+          case Some(elseBody) => s +
+            s"""
+              |else {
+              |${generate(elseBody)}
+              |}
+            """.stripMargin
+          case None => s
+        }
+
       case InvokeList(expressions) => expressions.map(format).mkString(", ")
 
-      case default => ""//throw new Exception(s"Illegal $default")
+      case ExpressionCall(expression, invokeList) => s"""core.Invoke(${format(expression)}, ${format(invokeList)})"""
+
+      case default => throw new Exception(s"Illegal $default")
     }
 
 
