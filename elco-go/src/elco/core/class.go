@@ -13,9 +13,18 @@ func init() {
 		return SimpleType(Class.Class())
 	})
 
-	Define(Class.Class(), "public", "create", func(class BaseClass) BaseInstance {
-		return NewInstance(func() *Type {
+	Define(Class.Class(), "public", "create", func(class BaseClass, args ...BaseInstance) BaseInstance {
+		inst := NewInstance(func() *Type {
 			return SimpleType(class)
 		})
+
+		newArgs := []BaseInstance{inst}
+		newArgs = append(newArgs, args...)
+
+		return GetAndInvoke(class, "initialize", newArgs...)
+	})
+
+	Define(Class.Class(), "public", "initialize", func(class BaseClass, inst BaseInstance, args ...BaseInstance) BaseInstance {
+		return inst
 	})
 }

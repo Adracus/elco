@@ -3,13 +3,7 @@ package main
 import "elco/core"
 
 func main() {
-	i1 := core.NewIntInstance(10)
-	i2 := core.NewIntInstance(20)
-	i3 := core.GetAndInvoke(i1, "plus", i2)
-
-	core.Invoke(core.Println, i3)
-
-	core.Invoke(core.Println, core.UnitInstance)
-
-	//fmt.Println(core.Get(core.UnitInstance, "create"))
+	core.Scope.Set("b", core.NewIntInstance(10))
+	core.Scope.Set("plus", core.Get(core.Scope.Get("b"), "plus"))
+	core.Invoke(core.Scope.Get("println"), core.Invoke(core.Scope.Get("plus"), core.NewIntInstance(20)))
 }

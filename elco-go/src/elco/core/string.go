@@ -56,7 +56,7 @@ func NewStringInstance(value string) *StringInstance {
 func HashString(s string) int {
 	acc := 0
 	for i, c := range s {
-		acc += int(math.Pow(float64(c), float64(i)))
+		acc += int(math.Pow(float64(c), float64(i+1)))
 	}
 	return acc
 }

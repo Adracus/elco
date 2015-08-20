@@ -23,12 +23,11 @@ func GetAndInvoke(inst BaseInstance, name string, values ...BaseInstance) BaseIn
 }
 
 func Find(inst BaseInstance, name string) (BaseInstance, bool) {
-	v, ok := inst.Props().Find(name)
-	if ok {
+	if v, ok := inst.Props().Find(name); ok {
 		return v, true
 	}
-	v, ok = classLookup(inst.Class().Class(), name)
-	if ok {
+
+	if v, ok := classLookup(inst.Class().Class(), name); ok {
 		return v.(*UnboundMethodInstance).Bind(inst), true
 	}
 	return nil, false
@@ -43,8 +42,7 @@ func Get(inst BaseInstance, name string) BaseInstance {
 }
 
 func classLookup(class BaseClass, name string) (BaseInstance, bool) {
-	v, ok := class.InstanceProps().Find(name)
-	if ok {
+	if v, ok := class.InstanceProps().Find(name); ok {
 		return v, true
 	}
 	if class == class.Super() {

@@ -58,6 +58,10 @@ func Define(class BaseClass, level, name string, fn interface{}) {
 	class.InstanceProps().Put(level, name, NewUnboundMethodInstance(fn))
 }
 
+func StaticDefine(class BaseClass, level, name string, fn interface{}) {
+	class.Props().Put(level, name, NewMethodInstance(fn))
+}
+
 func NewLazyClass(gen func() BaseClass) *LazyClass {
 	return &LazyClass{NewLazy(gen)}
 }

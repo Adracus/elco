@@ -29,15 +29,15 @@ object CodeGenerator {
       case Constant(value) => s"core.NewIntInstance($value)"
 
       case Extraction(expr, identifier) =>
-        s"core.Get(${format(expr)}, $identifier)"
+        s"""core.Get(${format(expr)}, "$identifier")"""
 
       case a: Assignment =>
-        s"${a.identifier} := ${format(a.expression)}"
+        s"""core.Scope.Set("${a.identifier}", ${format(a.expression)})"""
 
-      case VariableAccess(name) => name
+      case VariableAccess(name) => s"""core.Scope.Get("$name")"""
 
       case FunctionCall(name, params) =>
-        s"core.Invoke($name, ${format(params)}}"
+        s"""core.Invoke(core.Scope.Get("$name"), ${format(params)})"""
 
       case InvokeList(expressions) => expressions.map(format).mkString(", ")
 

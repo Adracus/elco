@@ -12,7 +12,7 @@ object Test extends App {
   val parser = Parser parsing grammar
   val lexer = ElcoLexer
 
-  val ast = parser.parse(lexer.lex("b = 10; plus = b.plus; plus(20)"))
+  val ast = parser.parse(lexer.lex("b = 10; plus = b.plus; println(plus(20))"))
   println(ast.toTreeString)
 
   val file = ElcoFile(ast.asInstanceOf[Expression])

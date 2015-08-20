@@ -23,18 +23,13 @@ func (props *Properties) Put(level, name string, value BaseInstance) {
 }
 
 func (props *Properties) Find(name string) (BaseInstance, bool) {
-	var res BaseInstance
-	var ok bool
-	res, ok = props.Get("public", name)
-	if ok {
+	if res, ok := props.Get("public", name); ok {
 		return res, true
 	}
-	res, ok = props.Get("protected", name)
-	if ok {
+	if res, ok := props.Get("protected", name); ok {
 		return res, true
 	}
-	res, ok = props.Get("private", name)
-	if ok {
+	if res, ok := props.Get("private", name); ok {
 		return res, true
 	}
 	return nil, false
